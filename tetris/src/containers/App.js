@@ -5,7 +5,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
-				<div className="text-lg">Welcome to Tetris</div>
+				<div className="welcome-title">Welcome to Tetris</div>
 			</div>
 		);
 	}
