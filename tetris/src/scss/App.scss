@@ -1,16 +1,21 @@
 // http://paletton.com/#uid=72+0t0kllllaFw0g0qFqFg0w0aF
 @import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700');
 
-$light-color: #E8E8E8;
+$light-color: #F8F8F8;
 $dark-color: #551300;
 $primary-light-color: #6E91A1;
 $primary-color: #27556C;
 
+@import '../../node_modules/bootstrap/scss/bootstrap';
 
 body {
 	background-color: $light-color;
 	color: $dark-color;
 	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.app {
+
 }
 
 .flex-1 {
@@ -20,4 +25,15 @@ body {
 .welcome-title {
 	text-align: center;
 	font-size: 2em;
+}
+
+.board {
+	border: 2px solid $primary-color;
+	padding-top: 200%;
+	border-top: 0;
+	margin-top: 20px;
+}
+
+.game-container {
+	height: 100%;
 }
