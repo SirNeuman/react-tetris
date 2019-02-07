@@ -6,6 +6,7 @@ class App extends Component {
 		return (
 			<div className="App">
 				<div className="welcome-title w-100 text-center">Welcome to Tetris</div>
+
 			</div>
 		);
 	}
