@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700");
+body {
+  background-color: #E8E8E8;
+  color: #551300;
+  font-family: 'Noto Sans KR', sans-serif; }
+
+.flex-1 {
+  flex: 1; }
+
+.welcome-title {
+  text-align: center;
+  font-size: 2em; }
+
+/*# sourceMappingURL=App.css.map */
