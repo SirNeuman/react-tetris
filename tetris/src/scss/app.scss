@@ -51,4 +51,12 @@ body {
 
 .grid-space {
 	border: 1px solid $primary-light-color;
+
+	&.filled {
+		opacity: 1;
+	}
+
+	&.empty {
+		opacity: 0.5;
+	}
 }
