@@ -24,7 +24,6 @@ export const initializeGrid = () => {
 		let gridState = _.map(_.range(20), (row) => {
 			return emptyRow;
 		});
-		console.log(gridState);
 		dispatch(setGridState(gridState));
 	};
 };

@@ -7490,13 +7490,25 @@ body {
   text-align: center;
   font-size: 2em; }
 
-.board {
-  border: 2px solid #27556C;
+.grid-container {
   padding-top: 200%;
-  border-top: 0;
+  position: relative;
   margin-top: 20px; }
+
+.grid {
+  border: 2px solid #27556C;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100%;
+  border-top: 0; }
 
 .game-container {
   height: 100%; }
+
+.grid-space {
+  border: 1px solid #6E91A1; }
 
 /*# sourceMappingURL=app.css.map */

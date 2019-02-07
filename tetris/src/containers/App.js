@@ -11,7 +11,7 @@ class App extends Component {
 				<div className="welcome-title w-100 text-center">Tetris</div>
 				<div className="row game-container">
 					<div className="col"></div>
-					<div className="col-3">
+					<div className="col-3 px-0">
 						<Grid/>
 					</div>
 					<div className="col"></div>
