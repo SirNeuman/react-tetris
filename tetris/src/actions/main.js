@@ -30,6 +30,13 @@ export const setTetrominos = (tetrominoes) => {
 	};
 };
 
+export const setTetrominoBag = (tetrominoBag) => {
+	return {
+		type: types.SET_TETROMINO_BAG,
+		tetrominoBag
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
@@ -93,9 +100,13 @@ export const initializePlayerState = () => {
 	};
 };
 
-export const initializeTetriminoBag = () => {
+export const addToTetrominoBag = () => {
 	return (dispatch, getState) => {
-
+		// choose all 7 tetrominoes in a random order to add to the existing bag
+		const currentTetrominoBag = getState().Main.tetrominoBag;
+		const shuffledTetrominoGroup = _.shuffle(getState().Main.tetrominos);
+		const newTetrominoBag = _.concat(currentTetrominoBag, shuffledTetrominoGroup);
+		dispatch(setTetrominoBag(newTetrominoBag));
 	};
 };
 

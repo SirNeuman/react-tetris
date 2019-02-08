@@ -4,7 +4,8 @@ const initialState = {
 	gameReady: false,
 	gridState: null,
 	playerState: null,
-	tetrominoes: null
+	tetrominoes: null,
+	tetrominoBag: []
 };
 
 const Main = (state = initialState, action) => {
@@ -28,6 +29,11 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				tetrominoes: action.tetrominoes
+			};
+		case types.SET_TETROMINO_BAG:
+			return {
+				...state,
+				tetrominoBag: action.tetrominoBag
 			};
 		default:
 			return state;
