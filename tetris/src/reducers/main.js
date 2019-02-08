@@ -3,7 +3,8 @@ import * as types from '../actions/actionTypes';
 const initialState = {
 	gameReady: false,
 	gridState: null,
-	playerState: null
+	playerState: null,
+	tetrominoes: null
 };
 
 const Main = (state = initialState, action) => {
@@ -22,6 +23,11 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				playerState: action.playerState
+			};
+		case types.SET_TETROMINOES:
+			return {
+				...state,
+				tetrominoes: action.tetrominoes
 			};
 		default:
 			return state;

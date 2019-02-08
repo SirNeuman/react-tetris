@@ -1,3 +1,4 @@
 export const SET_GAME_READY = 'SET_GAME_READY';
 export const SET_GRID_STATE = 'SET_GRID_STATE';
 export const SET_PLAYER_STATE = 'SET_PLAYER_STATE';
+export const SET_TETROMINOES = 'SET_TETROMINOES';

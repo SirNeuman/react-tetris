@@ -10,7 +10,7 @@ class Player extends Component {
 
 	render() {
 		const {
-			gridState
+			playerState
 		} = this.props;
 
 		return (null
@@ -21,8 +21,7 @@ class Player extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		gridState: state.Main.gridState,
-		gameReady: state.Main.gameReady
+		playerState: state.Main.playerState,
 	};
 };
 

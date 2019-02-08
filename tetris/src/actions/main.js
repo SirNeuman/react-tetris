@@ -16,11 +16,63 @@ export const setGameReady = (gameReady) => {
 	};
 };
 
+export const setPlayerState = (playerState) => {
+	return {
+		type: types.SET_PLAYER_STATE,
+		playerState
+	};
+};
+
+export const setTetrominos = (tetrominoes) => {
+	return {
+		type: types.SET_TETROMINOES,
+		tetrominoes
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
 =================================================================================
  */
+
+// define all 7 tetrominoes as 2d arrays: line, square, T, L, backwards L, S, backwards S (or Z i guess)
+const TETROMINOS = [
+	[
+		[true],
+		[true],
+		[true],
+		[true]
+	],
+	[
+		[true, true],
+		[true, true]
+	],
+	[
+		[true, true, true],
+		[false, true, false]
+	],
+	[
+		[true, false],
+		[true, false],
+		[true, true]
+	],
+	[
+		[false, true],
+		[false, true],
+		[true, true]
+	],
+	[
+		[true, false],
+		[true, true],
+		[false, true]
+	],
+	[
+		[false, true],
+		[true, true],
+		[true, false]
+	]
+];
 
 export const initializeGrid = () => {
 	return (dispatch, getState) => {
@@ -35,9 +87,23 @@ export const initializeGrid = () => {
 	};
 };
 
+export const initializePlayerState = () => {
+	return (dispatch, getState) => {
+
+	};
+};
+
+export const initializeTetriminoBag = () => {
+	return (dispatch, getState) => {
+
+	};
+};
+
 export const initializeGame = () => {
 	return (dispatch, getState) => {
-		dispatch(initializeGrid())
+		dispatch(setTetrominos(TETROMINOS));
+		dispatch(initializeGrid());
+		dispatch(initializePlayerState());
 		dispatch(setGameReady(true));
 	};
 };
