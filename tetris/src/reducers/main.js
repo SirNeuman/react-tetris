@@ -37,6 +37,7 @@ const Main = (state = initialState, action) => {
 				tetrominoBag: action.tetrominoBag
 			};
 		case types.SET_PLAYER_POSITION:
+			console.log('xxx', action.playerPosition);
 			return {
 				...state,
 				playerPosition: action.playerPosition

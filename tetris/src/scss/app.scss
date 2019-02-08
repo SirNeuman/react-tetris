@@ -55,6 +55,8 @@ body {
 
 	&.filled {
 		opacity: 1;
+		border: 1px solid $secondary-color;
+		background-color: $primary-color;
 	}
 
 	&.empty {

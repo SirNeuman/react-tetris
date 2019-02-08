@@ -95,6 +95,26 @@ export const initializeGrid = () => {
 	};
 };
 
+export const addPlayerToGrid = () => {
+	return (dispatch, getState) => {
+		const playerState = getState().Main.playerState;
+		const playerPostion = getState().Main.playerPosition;
+		const gridState= getState().Main.gridState;
+		const newGrid = _.map(gridState, (row, rowIndex) => {
+			return _.map(row, (space, colIndex) => {
+				// Push the player onto the grid. the length of each row of the player state is equal,
+				// so we can assume that the first row length is the same as every other row.
+				if ((rowIndex + playerPostion[0]) < _.size(playerState) && (colIndex - playerPostion[1]) < _.size(playerState[0])) {
+					return playerState[rowIndex + playerPostion[0]][colIndex - playerPostion[1]];
+				} else {
+					return space;
+				}
+			});
+		});
+		dispatch(setGridState(newGrid));
+	};
+};
+
 export const initializePlayer = () => {
 	return (dispatch, getState) => {
 		// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
@@ -106,6 +126,7 @@ export const initializePlayer = () => {
 		const startPlayerColumn = _.round((10 - playerWidth) / 2) - 1;
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
+		dispatch(addPlayerToGrid());
 	};
 };
 

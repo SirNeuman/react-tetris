@@ -28,7 +28,7 @@ class Grid extends Component {
 						key={'grid-space-' + rowIdx + '-' + spaceIdx}
 						className={'flex-1 grid-space ' + (space === true ? 'filled' : 'empty') }></div>
 				);
-			})
+			});
 			return (
 				<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
 					{spaces}
@@ -39,7 +39,6 @@ class Grid extends Component {
 		return (
 			<div className="grid-container">
 				<div className="grid d-flex flex-column">
-					<Player />
 					{grid}
 				</div>
 			</div>
