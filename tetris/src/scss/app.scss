@@ -1,0 +1,65 @@
+// http://paletton.com/#uid=72+0t0kllllaFw0g0qFqFg0w0aF
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR:400,500,700');
+
+$light-color: #F8F8F8;
+$dark-color: #551300;
+$primary-light-color: #6E91A1;
+$primary-color: #27556C;
+$secondary-color: #AA5239;
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+body {
+	background-color: $light-color;
+	color: $dark-color;
+	font-family: 'Noto Sans KR', sans-serif;
+}
+
+.app {
+
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+.welcome-title {
+	text-align: center;
+	font-size: 2em;
+}
+
+.grid-container {
+	padding-top: 200%;
+	position: relative;
+	margin-top: 20px;
+}
+
+.grid {
+	border: 2px solid $primary-color;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	height: 100%;
+	border-top: 0;
+
+}
+
+.game-container {
+	height: 100%;
+}
+
+.grid-space {
+	border: 1px solid $primary-light-color;
+
+	&.filled {
+		opacity: 1;
+		border: 1px solid $secondary-color;
+		background-color: $primary-color;
+	}
+
+	&.empty {
+		opacity: 0.5;
+	}
+}
