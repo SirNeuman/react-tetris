@@ -123,7 +123,7 @@ export const initializePlayer = () => {
 		dispatch(setPlayerState(playerTetromino));
 		const playerWidth = _.size(playerTetromino[0]);
 		// a row is 10 spaces. center the player as much as possible
-		const startPlayerColumn = _.round((10 - playerWidth) / 2) - 1;
+		const startPlayerColumn = _.round((10 - playerWidth) / 2);
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
 		dispatch(addPlayerToGrid());
