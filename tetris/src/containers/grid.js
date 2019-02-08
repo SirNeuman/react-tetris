@@ -16,11 +16,10 @@ class Grid extends Component {
 			gameReady
 		} = this.props;
 
-		console.log(gridState);
 		if (!gameReady) {
 			return (
 				<div>LOADING...</div>
-			)
+			);
 		}
 		const grid = _.map(gridState, (row, rowIdx) => {
 			const spaces = _.map(row, (space, spaceIdx) => {
@@ -34,7 +33,7 @@ class Grid extends Component {
 				<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
 					{spaces}
 				</div>
-			)
+			);
 		});
 
 		return (

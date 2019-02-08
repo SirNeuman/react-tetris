@@ -23,6 +23,13 @@ export const setPlayerState = (playerState) => {
 	};
 };
 
+export const setPlayerPosition = (playerPosition) => {
+	return {
+		type: types.SET_PLAYER_POSITION,
+		playerPosition
+	};
+};
+
 export const setTetrominos = (tetrominoes) => {
 	return {
 		type: types.SET_TETROMINOES,
@@ -43,41 +50,35 @@ The following are asynchronous thunk actions.
 =================================================================================
  */
 
-// define all 7 tetrominoes as 2d arrays: line, square, T, L, backwards L, S, backwards S (or Z i guess)
-const TETROMINOS = [
+// Define all 7 tetrominoes as 2d arrays: line, square, T, L, backwards L, S, backwards S (or Z i guess).
+// Start all tetrominos as lying flat, as they are in Tetris Effect starting positions.
+const TETROMINOES = [
 	[
-		[true],
-		[true],
-		[true],
-		[true]
+		[true, true, true, true],
 	],
 	[
 		[true, true],
 		[true, true]
 	],
 	[
+		[false, true, false],
+		[true, true, true]
+	],
+	[
+		[true, false, false],
 		[true, true, true],
-		[false, true, false]
 	],
 	[
-		[true, false],
-		[true, false],
-		[true, true]
+		[false, false, true],
+		[true, true, true],
 	],
 	[
-		[false, true],
-		[false, true],
-		[true, true]
+		[false, true, true],
+		[true, true, false],
 	],
 	[
-		[true, false],
-		[true, true],
-		[false, true]
-	],
-	[
-		[false, true],
-		[true, true],
-		[true, false]
+		[true, true, false],
+		[false, true, true],
 	]
 ];
 
@@ -94,9 +95,17 @@ export const initializeGrid = () => {
 	};
 };
 
-export const initializePlayerState = () => {
+export const initializePlayer = () => {
 	return (dispatch, getState) => {
-
+		// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
+		const startPlayerRow = 0;
+		const playerTetromino = getState().Main.tetrominoBag[0];
+		dispatch(setPlayerState(playerTetromino));
+		const playerWidth = _.size(playerTetromino[0]);
+		// a row is 10 spaces. center the player as much as possible
+		const startPlayerColumn = _.round((10 - playerWidth) / 2) - 1;
+		const playerPosition = [startPlayerRow, startPlayerColumn];
+		dispatch(setPlayerPosition(playerPosition));
 	};
 };
 
@@ -104,7 +113,7 @@ export const addToTetrominoBag = () => {
 	return (dispatch, getState) => {
 		// choose all 7 tetrominoes in a random order to add to the existing bag
 		const currentTetrominoBag = getState().Main.tetrominoBag;
-		const shuffledTetrominoGroup = _.shuffle(getState().Main.tetrominos);
+		const shuffledTetrominoGroup = _.shuffle(getState().Main.tetrominoes);
 		const newTetrominoBag = _.concat(currentTetrominoBag, shuffledTetrominoGroup);
 		dispatch(setTetrominoBag(newTetrominoBag));
 	};
@@ -112,9 +121,10 @@ export const addToTetrominoBag = () => {
 
 export const initializeGame = () => {
 	return (dispatch, getState) => {
-		dispatch(setTetrominos(TETROMINOS));
+		dispatch(setTetrominos(TETROMINOES));
+		dispatch(addToTetrominoBag());
 		dispatch(initializeGrid());
-		dispatch(initializePlayerState());
+		dispatch(initializePlayer());
 		dispatch(setGameReady(true));
 	};
 };

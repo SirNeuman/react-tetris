@@ -5,7 +5,8 @@ const initialState = {
 	gridState: null,
 	playerState: null,
 	tetrominoes: null,
-	tetrominoBag: []
+	tetrominoBag: [],
+	playerPosition: null
 };
 
 const Main = (state = initialState, action) => {
@@ -34,6 +35,11 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				tetrominoBag: action.tetrominoBag
+			};
+		case types.SET_PLAYER_POSITION:
+			return {
+				...state,
+				playerPosition: action.playerPosition
 			};
 		default:
 			return state;
