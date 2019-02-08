@@ -9,6 +9,13 @@ export const setGridState = (gridState) => {
 	};
 };
 
+export const setGameReady = (gameReady) => {
+	return {
+		type: types.SET_GAME_READY,
+		gameReady
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
@@ -25,5 +32,12 @@ export const initializeGrid = () => {
 			return emptyRow;
 		});
 		dispatch(setGridState(gridState));
+	};
+};
+
+export const initializeGame = () => {
+	return (dispatch, getState) => {
+		dispatch(initializeGrid())
+		dispatch(setGameReady(true));
 	};
 };

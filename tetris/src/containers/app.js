@@ -3,8 +3,14 @@ import { connect } from 'react-redux';
 
 import '../css/app.css';
 import Grid from './grid'
+import { initializeGame } from '../actions/main';
 
 class App extends Component {
+
+	componentDidMount() {
+		this.props.initializeGame();
+	}
+
 	render() {
 		return (
 			<div className="app container">
@@ -28,6 +34,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+		initializeGame: () => {
+			dispatch(initializeGame());
+		}
 	};
 };
 

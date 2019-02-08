@@ -4,40 +4,43 @@ import _ from 'lodash';
 
 import '../css/app.css';
 import { initializeGrid } from '../actions/main';
+import Player from './player';
 
 class Grid extends Component {
 
-	componentDidMount() {
-		this.props.initializeGrid();
-	}
+
 
 	render() {
 		const {
-			gridState
+			gridState,
+			gameReady
 		} = this.props;
 
 		console.log(gridState);
-		let grid = null;
-		if (_.size(gridState) > 1) {
-			grid = _.map(gridState, (row, rowIdx) => {
-				const spaces = _.map(row, (space, spaceIdx) => {
-					return (
-						<div
-							key={'grid-space-' + rowIdx + '-' + spaceIdx}
-							className={'flex-1 grid-space ' + (space === true ? 'filled' : 'empty') }></div>
-					);
-				})
-				return (
-					<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
-						{spaces}
-					</div>
-				)
-			})
+		if (!gameReady) {
+			return (
+				<div>LOADING...</div>
+			)
 		}
+		const grid = _.map(gridState, (row, rowIdx) => {
+			const spaces = _.map(row, (space, spaceIdx) => {
+				return (
+					<div
+						key={'grid-space-' + rowIdx + '-' + spaceIdx}
+						className={'flex-1 grid-space ' + (space === true ? 'filled' : 'empty') }></div>
+				);
+			})
+			return (
+				<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
+					{spaces}
+				</div>
+			)
+		});
 
 		return (
 			<div className="grid-container">
 				<div className="grid d-flex flex-column">
+					<Player />
 					{grid}
 				</div>
 			</div>
@@ -47,7 +50,8 @@ class Grid extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		gridState: state.Main.gridState
+		gridState: state.Main.gridState,
+		gameReady: state.Main.gameReady
 	};
 };
 
