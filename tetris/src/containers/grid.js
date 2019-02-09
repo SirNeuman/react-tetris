@@ -7,25 +7,33 @@ import { initializeGrid,
 	movePlayerLeft,
 	movePlayerRight,
 	rotatePlayerLeft,
-	rotatePlayerRight, } from '../actions/main';
+	rotatePlayerRight,
+	movePlayerDown } from '../actions/main';
 // import Player from './player';
 
 class Grid extends Component {
 	constructor(props) {
 		super(props);
-		// controls will be: a (97) = left, d (100) = right, q (113) = rotate left, e (101) = rotate right
+		// controls will be:
+		// 	a (97) = left,
+		// 	d (100) = right,
+		// 	q (113) = rotate left,
+		// 	e (101) = rotate right,
+		// 	s (115) = move 1 space down
 		this.state = {
 			controls: {
 				97: this.props.movePlayerLeft,
 				100: this.props.movePlayerRight,
 				113: this.props.rotatePlayerLeft,
-				101: this.props.rotatePlayerRight
+				101: this.props.rotatePlayerRight,
+				115: this.props.movePlayerDown
 			}
 		};
 	}
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
+		console.log(code);
 		if (_.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}
@@ -106,6 +114,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		rotatePlayerRight: () => {
 			dispatch(rotatePlayerRight());
+		},
+		movePlayerDown: () => {
+			dispatch(movePlayerDown(true));
 		}
 	};
 };

@@ -215,11 +215,11 @@ export const checkPlayerHitEnd = () => {
 		_.forEach(playerState, (row, rowIndex) => {
 			_.forEach(row, (playerSpace, colIndex) => {
 				// don't check the rows that are negative index because those parts of the player have yet to enter
-				// the map;
+				// the map and don't check empty spaces within the player
 				let nextRowPosition = rowIndex + nextPosition[0];
-				if (nextRowPosition > -1) {
+				if (nextRowPosition > -1 && playerSpace === 1) {
 					if ((nextRowPosition > _.size(gridState) - 1) ||
-						((playerSpace === 1) && (gridState[nextRowPosition][colIndex + playerPosition[1]] === 2))) {
+						(gridState[nextRowPosition][colIndex + playerPosition[1]] === 2)) {
 						hitEnd = true;
 					}
 				}
@@ -236,9 +236,11 @@ export const checkPlayerHitEnd = () => {
 	};
 };
 
-export const movePlayerDown = () => {
+let dropPlayerTimer = null;
+
+export const movePlayerDown = (manualTrigger=false) => {
 	return (dispatch, getState) => {
-		setTimeout(() => {
+		const dropPlayer = () => {
 			const playerHitEnd = dispatch(checkPlayerHitEnd());
 			if (!playerHitEnd) {
 				let playerPosition = getState().Main.playerPosition;
@@ -247,7 +249,16 @@ export const movePlayerDown = () => {
 				dispatch(drawPlayerToGrid());
 				dispatch(movePlayerDown());
 			}
-		}, getState().Main.speed);
+		};
+		if (manualTrigger) {
+			clearTimeout(dropPlayerTimer);
+			dropPlayer();
+			dispatch(movePlayerDown);
+		} else {
+			dropPlayerTimer = setTimeout(() => {
+				dropPlayer();
+			}, getState().Main.speed);
+		}
 	};
 };
 
