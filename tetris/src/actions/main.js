@@ -100,7 +100,7 @@ export const drawPlayerToGrid = () => {
 	return (dispatch, getState) => {
 		const playerState = getState().Main.playerState;
 		const playerPosition = getState().Main.playerPosition;
-		const gridState= getState().Main.gridState;
+		const gridState = getState().Main.gridState;
 		const newGrid = _.map(gridState, (row, rowIndex) => {
 			return _.map(row, (space, colIndex) => {
 				// Push the player onto the grid. the length of each row of the player state is equal,
@@ -115,6 +115,31 @@ export const drawPlayerToGrid = () => {
 					} else {
 						return space;
 					}
+				}
+			});
+		});
+		dispatch(setGridState(newGrid));
+	};
+};
+
+export const addPlayerToGrid = () => {
+	return (dispatch, getState) => {
+		const playerState = getState().Main.playerState;
+		const playerPosition = getState().Main.playerPosition;
+		const gridState = getState().Main.gridState;
+		const newGrid = _.map(gridState, (row, rowIndex) => {
+			return _.map(row, (space, colIndex) => {
+				// Push the player onto the grid. the length of each row of the player state is equal,
+				// so we can assume that the first row length is the same as every other row.
+				if ((rowIndex >= playerPosition[0]) && (rowIndex < (_.size(playerState) + playerPosition[0]))
+					&& (colIndex >= playerPosition[1]) && (colIndex < (_.size(playerState[0]) + playerPosition[1]))) {
+					if (playerState[rowIndex - playerPosition[0]][colIndex - playerPosition[1]] === 1) {
+						return 2;
+					} else {
+						return 0;
+					}
+				} else {
+					return space;
 				}
 			});
 		});
@@ -163,6 +188,11 @@ export const checkPlayerHitEnd = () => {
 				}
 			});
 		});
+		if (hitEnd) {
+			// convert player into grid as 2's and reinitialize player at top of screen
+			dispatch(addPlayerToGrid());
+			dispatch(initializePlayer());
+		}
 		console.log(hitEnd);
 	};
 };
