@@ -179,7 +179,6 @@ export const initializePlayer = () => {
 			let isEmptyRow = _.every(lastRow, (space) => {
 				return space === 0;
 			});
-			console.log(isEmptyRow, lastRow);
 			if (isEmptyRow) {
 				numberOfEmptyLastRows += 1;
 			} else {
@@ -187,7 +186,6 @@ export const initializePlayer = () => {
 			}
 		});
 		const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino);
-		console.log(startPlayerRow, numberOfEmptyLastRows,  _.size(playerTetromino));
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
 		dispatch(drawPlayerToGrid());
@@ -243,7 +241,6 @@ export const checkPlayerHitEnd = () => {
 export const movePlayerDown = () => {
 	return (dispatch, getState) => {
 		setTimeout(() => {
-
 			const playerHitEnd = dispatch(checkPlayerHitEnd());
 			if (!playerHitEnd) {
 				let playerPosition = getState().Main.playerPosition;
@@ -253,6 +250,26 @@ export const movePlayerDown = () => {
 				dispatch(movePlayerDown());
 			}
 		}, getState().Main.speed);
+	};
+};
+
+export const movePlayerLeft = () => {
+	return (dispatch, getState) => {
+		let playerPosition = getState().Main.playerPosition;
+		const playerState = getState().Main.playerState;
+		playerPosition[1] -= 1;
+		dispatch(setPlayerPosition(playerPosition));
+		dispatch(drawPlayerToGrid());
+	};
+};
+
+export const movePlayerRight = () => {
+	return (dispatch, getState) => {
+		let playerPosition = getState().Main.playerPosition;
+		const playerState = getState().Main.playerState;
+		playerPosition[1] += 1;
+		dispatch(setPlayerPosition(playerPosition));
+		dispatch(drawPlayerToGrid());
 	};
 };
 

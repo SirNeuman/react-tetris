@@ -3,12 +3,37 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import '../css/app.css';
-import { initializeGrid } from '../actions/main';
+import { initializeGrid,
+	movePlayerLeft,
+	movePlayerRight } from '../actions/main';
 // import Player from './player';
 
 class Grid extends Component {
+	constructor(props) {
+		super(props);
+		// controls will be: a (97) = left, d (100) = right, q (113) = rotate left, e (101) = rotate right
+		this.state = {
+			controls: {
+				97: this.props.movePlayerLeft,
+				100: this.props.movePlayerRight
+			}
+		};
+	}
 
+	handleKeyPress = (e) => {
+		const code = e.keyCode;
+		if (_.has(this.state.controls, code)) {
+			this.state.controls[code]();
+		}
+	}
 
+	componentDidMount() {
+		document.addEventListener('keypress', this.handleKeyPress);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('keypress', this.handleKeyPress);
+	}
 
 	render() {
 		const {
@@ -66,6 +91,12 @@ const mapDispatchToProps = (dispatch) => {
 		initializeGrid: () => {
 			dispatch(initializeGrid());
 		},
+		movePlayerLeft: () => {
+			dispatch(movePlayerLeft());
+		},
+		movePlayerRight: () => {
+			dispatch(movePlayerRight());
+		}
 	};
 };
 
