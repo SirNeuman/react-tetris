@@ -265,9 +265,42 @@ export const movePlayerRight = () => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
 		const playerState = getState().Main.playerState;
-		playerPosition[1] += 1;
-		dispatch(setPlayerPosition(playerPosition));
-		dispatch(drawPlayerToGrid());
+		// Do not let player move right if right-most part of player would hit right edge of grid.
+		let currentPlayerFurthestRightIndex = _.size(playerState);
+		// Check the last column of every row. Once we have found the
+		let furthestRightPieceFound = false;
+		_.rangeRight(currentPlayerFurthestRightIndex, (colIndex) => {
+			_.forEach(playerState, (playerRow) => {
+				if (playerRow[colIndex] === 1) {
+					furthestRightPieceFound = true;
+					return false;
+				}
+			});
+			if (furthestRightPieceFound) {
+				return false;
+			} else {
+				currentPlayerFurthestRightIndex -= 1;
+			}
+		});
+		currentPlayerFurthestRightIndex = currentPlayerFurthestRightIndex + playerPosition[1];
+		if (currentPlayerFurthestRightIndex < _.size(getState().Main.gridState[0])) {
+			playerPosition[1] += 1;
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(drawPlayerToGrid());
+		}
+
+	};
+};
+
+export const rotatePlayerLeft = () => {
+	return (dispatch, getState) => {
+
+	};
+};
+
+export const rotatePlayerRight = () => {
+	return (dispatch, getState) => {
+
 	};
 };
 
