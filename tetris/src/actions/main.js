@@ -326,15 +326,40 @@ export const movePlayerRight = () => {
 	};
 };
 
-export const rotatePlayerLeft = () => {
+export const rotatePlayerCounterClockwise = () => {
 	return (dispatch, getState) => {
-
+		const playerState = getState().Main.playerState;
+		// Rotating the square 2D array counter clockwise is a matter of rebulding the same 2D array,
+		// with all of the items, starting from the last column, and moving them into rows from the top down.
+		let newPlayerState = [];
+		_.forEachRight(playerState[0], (col, colIndex) => {
+			let newPlayerRow = [];
+			_.forEach(playerState, (row, rowIndex) => {
+				newPlayerRow.push(playerState[rowIndex][colIndex]);
+			});
+			newPlayerState.push(newPlayerRow);
+		});
+		dispatch(setPlayerState(newPlayerState));
+		dispatch(drawPlayerToGrid());
 	};
 };
 
-export const rotatePlayerRight = () => {
+export const rotatePlayerClockwise = () => {
 	return (dispatch, getState) => {
-
+		const playerState = getState().Main.playerState;
+		// Rotating the square 2D array clockwise is a matter of rebulding the same 2D array,
+		// with all of the items, starting from the first column, and moving them into rows from the top down.
+		let newPlayerState = [];
+		console.log(_.size(playerState));
+		_.forEach(playerState[0], (col, colIndex) => {
+			let newPlayerRow = [];
+			_.forEachRight(playerState, (row, rowIndex) => {
+				newPlayerRow.push(playerState[rowIndex][colIndex]);
+			});
+			newPlayerState.push(newPlayerRow);
+		});
+		dispatch(setPlayerState(newPlayerState));
+		dispatch(drawPlayerToGrid());
 	};
 };
 

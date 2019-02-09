@@ -6,8 +6,8 @@ import '../css/app.css';
 import { initializeGrid,
 	movePlayerLeft,
 	movePlayerRight,
-	rotatePlayerLeft,
-	rotatePlayerRight,
+	rotatePlayerCounterClockwise,
+	rotatePlayerClockwise,
 	movePlayerDown } from '../actions/main';
 // import Player from './player';
 
@@ -24,8 +24,8 @@ class Grid extends Component {
 			controls: {
 				97: this.props.movePlayerLeft,
 				100: this.props.movePlayerRight,
-				113: this.props.rotatePlayerLeft,
-				101: this.props.rotatePlayerRight,
+				113: this.props.rotatePlayerCounterClockwise,
+				101: this.props.rotatePlayerClockwise,
 				115: this.props.movePlayerDown
 			}
 		};
@@ -109,11 +109,11 @@ const mapDispatchToProps = (dispatch) => {
 		movePlayerRight: () => {
 			dispatch(movePlayerRight());
 		},
-		rotatePlayerLeft: () => {
-			dispatch(rotatePlayerLeft());
+		rotatePlayerCounterClockwise: () => {
+			dispatch(rotatePlayerCounterClockwise());
 		},
-		rotatePlayerRight: () => {
-			dispatch(rotatePlayerRight());
+		rotatePlayerClockwise: () => {
+			dispatch(rotatePlayerClockwise());
 		},
 		movePlayerDown: () => {
 			dispatch(movePlayerDown(true));
