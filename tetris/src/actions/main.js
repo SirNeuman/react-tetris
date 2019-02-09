@@ -51,32 +51,41 @@ The following are asynchronous thunk actions.
  */
 
 // Define all 7 tetrominoes as 2d arrays: line, square, T, L, backwards L, S, backwards S (or Z i guess).
-// Start all tetrominos as lying flat, as they are in Tetris Effect starting positions.
+// Start all tetrominos as lying flat, as they are in Tetris Effect starting positions. Define all as square
+// 2D arrays for easy rotation.
 const TETROMINOES = [
 	[
+		[0, 0, 0, 0],
+		[0, 0, 0, 0],
 		[1, 1, 1, 1],
+		[0, 0, 0, 0]
 	],
 	[
 		[1, 1],
 		[1, 1]
 	],
 	[
+		[0, 0, 0],
 		[0, 1, 0],
 		[1, 1, 1]
 	],
 	[
+		[0, 0, 0],
 		[1, 0, 0],
 		[1, 1, 1],
 	],
 	[
+		[0, 0, 0],
 		[0, 0, 1],
 		[1, 1, 1],
 	],
 	[
+		[0, 0, 0],
 		[0, 1, 1],
 		[1, 1, 0],
 	],
 	[
+		[0, 0, 0],
 		[1, 1, 0],
 		[0, 1, 1],
 	]
@@ -103,6 +112,10 @@ export const drawPlayerToGrid = () => {
 		const gridState = getState().Main.gridState;
 		const newGrid = _.map(gridState, (row, rowIndex) => {
 			return _.map(row, (space, colIndex) => {
+				// If space is a filled space return 2 regardless.
+				if (space == 2) {
+					return 2;
+				}
 				// Push the player onto the grid. the length of each row of the player state is equal,
 				// so we can assume that the first row length is the same as every other row.
 				if ((rowIndex >= playerPosition[0]) && (rowIndex < (_.size(playerState) + playerPosition[0]))
@@ -150,12 +163,26 @@ export const addPlayerToGrid = () => {
 export const initializePlayer = () => {
 	return (dispatch, getState) => {
 		// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
-		const startPlayerRow = 0;
 		const playerTetromino = getState().Main.tetrominoBag[0];
 		dispatch(setPlayerState(playerTetromino));
 		const playerWidth = _.size(playerTetromino[0]);
-		// a row is 10 spaces. center the player as much as possible
+		// a row is 10 spaces. center the player column as much as possible
 		const startPlayerColumn = _.round((10 - playerWidth) / 2);
+		// start player row with the last filled row being at the top of the grid. (the odd one out is the line piece)
+		let numberOfEmptyLastRows = 0;
+		_.forEachRight(playerTetromino, (lastRow, lastRowIdx) => {
+			let isEmptyRow = _.every(lastRow, (space) => {
+				return space === 0;
+			});
+			console.log(isEmptyRow, lastRow);
+			if (isEmptyRow) {
+				numberOfEmptyLastRows += 1;
+			} else {
+				return false;
+			}
+		});
+		const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino);
+		console.log(startPlayerRow, numberOfEmptyLastRows,  _.size(playerTetromino));
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
 		dispatch(drawPlayerToGrid());
@@ -180,15 +207,20 @@ export const checkPlayerHitEnd = () => {
 		const playerState = getState().Main.playerState;
 		const playerPosition = getState().Main.playerPosition;
 		const nextPosition = [playerPosition[0] + 1, playerPosition[1]];
-		console.log()
 		const gridState= getState().Main.gridState;
 		let hitEnd = false;
 		_.forEach(playerState, (row, rowIndex) => {
 			_.forEach(row, (playerSpace, colIndex) => {
-				if ((rowIndex + nextPosition[0] > _.size(gridState) - 1) ||
-					((playerSpace === 1) && (gridState[rowIndex + nextPosition[0]][colIndex + playerPosition[1]] === 2))) {
-					hitEnd = true;
+				// don't check the rows that are negative index because those parts of the player have yet to enter
+				// the map;
+				let nextRowPosition = rowIndex + nextPosition[0];
+				if (nextRowPosition > -1) {
+					if ((nextRowPosition > _.size(gridState) - 1) ||
+						((playerSpace === 1) && (gridState[nextRowPosition][colIndex + playerPosition[1]] === 2))) {
+						hitEnd = true;
+					}
 				}
+
 			});
 		});
 		if (hitEnd) {
