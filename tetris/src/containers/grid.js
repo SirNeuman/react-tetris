@@ -29,7 +29,7 @@ class Grid extends Component {
 				} else if (space === 1) {
 					spaceClass = 'player';
 				} else {
-					spaceClass = 'filled'
+					spaceClass = 'filled';
 				}
 				return (
 					<div
