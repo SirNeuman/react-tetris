@@ -251,6 +251,8 @@ export const movePlayerDown = (manualTrigger=false) => {
 			}
 		};
 		if (manualTrigger) {
+			// Uere we need to clear the timeout and reset the timer for the next auto move player down, otherwise
+			// we'll have multiple timer's going and the drop speed will get crazy fast.
 			clearTimeout(dropPlayerTimer);
 			dropPlayer();
 			dispatch(movePlayerDown);
