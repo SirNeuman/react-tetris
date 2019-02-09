@@ -17,8 +17,8 @@ class Grid extends Component {
 		// controls will be:
 		// 	a (97) = left,
 		// 	d (100) = right,
-		// 	q (113) = rotate left,
-		// 	e (101) = rotate right,
+		// 	q (113) = rotate counter clockwise,
+		// 	e (101) = rotate clockwise,
 		// 	s (115) = move 1 space down
 		this.state = {
 			controls: {
@@ -33,7 +33,6 @@ class Grid extends Component {
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
-		console.log(code);
 		if (_.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}

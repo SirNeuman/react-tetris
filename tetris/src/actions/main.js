@@ -272,7 +272,7 @@ export const movePlayerLeft = () => {
 		let currentPlayerFurthestLeftIndex = 0;
 		// Check the last column of every row. Once we have found the
 		let furthestLeftPieceFound = false;
-		_.range(_.size(playerState), (colIndex) => {
+		_.forEach(playerState[0], (col, colIndex) => {
 			_.forEach(playerState, (playerRow) => {
 				if (playerRow[colIndex] === 1) {
 					furthestLeftPieceFound = true;
@@ -282,7 +282,7 @@ export const movePlayerLeft = () => {
 			if (furthestLeftPieceFound) {
 				return false;
 			} else {
-				currentPlayerFurthestLeftIndex -= 1;
+				currentPlayerFurthestLeftIndex += 1;
 			}
 		});
 		currentPlayerFurthestLeftIndex = currentPlayerFurthestLeftIndex + playerPosition[1];
@@ -303,9 +303,9 @@ export const movePlayerRight = () => {
 		let currentPlayerFurthestRightIndex = _.size(playerState);
 		// Check the last column of every row. Once we have found the
 		let furthestRightPieceFound = false;
-		_.rangeRight(currentPlayerFurthestRightIndex, (colIndex) => {
-			_.forEach(playerState, (playerRow) => {
-				if (playerRow[colIndex] === 1) {
+		_.forEachRight(playerState[0], (col, colIndex) => {
+			_.forEach(playerState, (row) => {
+				if (row[colIndex] === 1) {
 					furthestRightPieceFound = true;
 					return false;
 				}
