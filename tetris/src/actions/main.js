@@ -163,7 +163,12 @@ export const addPlayerToGrid = () => {
 export const initializePlayer = () => {
 	return (dispatch, getState) => {
 		// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
-		const playerTetromino = getState().Main.tetrominoBag[0];
+		let tetrominoBag = getState().Main.tetrominoBag;
+		let playerTetromino = tetrominoBag.shift();
+		dispatch(setTetrominoBag(tetrominoBag));
+		if (_.size(tetrominoBag) < 2) {
+			dispatch(addToTetrominoBag());
+		}
 		dispatch(setPlayerState(playerTetromino));
 		const playerWidth = _.size(playerTetromino[0]);
 		// a row is 10 spaces. center the player column as much as possible
