@@ -113,7 +113,7 @@ export const drawPlayerToGrid = () => {
 		const newGrid = _.map(gridState, (row, rowIndex) => {
 			return _.map(row, (space, colIndex) => {
 				// If space is a filled space return 2 regardless.
-				if (space == 2) {
+				if (space === 2) {
 					return 2;
 				}
 				// Push the player onto the grid. the length of each row of the player state is equal,
@@ -227,8 +227,6 @@ export const checkPlayerHitEnd = () => {
 			});
 		});
 		if (hitEnd) {
-			// move player position back up 1 row.
-			const newPosition = [playerPosition[0] - 1, playerPosition[1]];
 			dispatch(setPlayerPosition(playerPosition));
 			// convert player into grid as 2's and reinitialize player at top of screen
 			dispatch(addPlayerToGrid());
