@@ -54,39 +54,40 @@ The following are asynchronous thunk actions.
 // Start all tetrominos as lying flat, as they are in Tetris Effect starting positions.
 const TETROMINOES = [
 	[
-		[true, true, true, true],
+		[1, 1, 1, 1],
 	],
 	[
-		[true, true],
-		[true, true]
+		[1, 1],
+		[1, 1]
 	],
 	[
-		[false, true, false],
-		[true, true, true]
+		[0, 1, 0],
+		[1, 1, 1]
 	],
 	[
-		[true, false, false],
-		[true, true, true],
+		[1, 0, 0],
+		[1, 1, 1],
 	],
 	[
-		[false, false, true],
-		[true, true, true],
+		[0, 0, 1],
+		[1, 1, 1],
 	],
 	[
-		[false, true, true],
-		[true, true, false],
+		[0, 1, 1],
+		[1, 1, 0],
 	],
 	[
-		[true, true, false],
-		[false, true, true],
+		[1, 1, 0],
+		[0, 1, 1],
 	]
 ];
 
 export const initializeGrid = () => {
 	return (dispatch, getState) => {
-		// create a 2d array with 10 columns and 20 rows
+		// create a 2d array with 10 columns and 20 rows.
+		// 3 states: 0 means empty space. 1 means space filled by player. 2 is space filled by dropped blocks.
 		const emptyRow = _.map(_.range(10), (space) => {
-			return false;
+			return 0;
 		});
 		let gridState = _.map(_.range(20), (row) => {
 			return emptyRow;
@@ -95,19 +96,26 @@ export const initializeGrid = () => {
 	};
 };
 
-export const addPlayerToGrid = () => {
+export const drawPlayerToGrid = () => {
 	return (dispatch, getState) => {
 		const playerState = getState().Main.playerState;
-		const playerPostion = getState().Main.playerPosition;
+		const playerPosition = getState().Main.playerPosition;
 		const gridState= getState().Main.gridState;
 		const newGrid = _.map(gridState, (row, rowIndex) => {
+			console.log('xxx', row, playerPosition);
 			return _.map(row, (space, colIndex) => {
 				// Push the player onto the grid. the length of each row of the player state is equal,
 				// so we can assume that the first row length is the same as every other row.
-				if ((rowIndex + playerPostion[0]) < _.size(playerState) && (colIndex - playerPostion[1]) < _.size(playerState[0])) {
-					return playerState[rowIndex + playerPostion[0]][colIndex - playerPostion[1]];
+				if ((rowIndex >= playerPosition[0]) && (rowIndex < (_.size(playerState) + playerPosition[0]))
+					&& (colIndex >= playerPosition[1]) && (colIndex < (_.size(playerState[0]) + playerPosition[1]))) {
+					return playerState[rowIndex - playerPosition[0]][colIndex - playerPosition[1]];
 				} else {
-					return space;
+					if (space === 1) {
+						// if the space was previously a player change it back to an empty space
+						return 0;
+					} else {
+						return space;
+					}
 				}
 			});
 		});
@@ -126,7 +134,7 @@ export const initializePlayer = () => {
 		const startPlayerColumn = _.round((10 - playerWidth) / 2);
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
-		dispatch(addPlayerToGrid());
+		dispatch(drawPlayerToGrid());
 	};
 };
 
@@ -140,12 +148,26 @@ export const addToTetrominoBag = () => {
 	};
 };
 
+export const movePlayerDown = () => {
+	return (dispatch, getState) => {
+		console.log('what is happening?');
+		setTimeout(() => {
+			let playerPosition = getState().Main.playerPosition;
+			playerPosition[0] += 1;
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(drawPlayerToGrid());
+			// dispatch(movePlayerDown());
+		}, getState().Main.speed);
+	};
+};
+
 export const initializeGame = () => {
 	return (dispatch, getState) => {
 		dispatch(setTetrominos(TETROMINOES));
 		dispatch(addToTetrominoBag());
 		dispatch(initializeGrid());
 		dispatch(initializePlayer());
+		dispatch(movePlayerDown());
 		dispatch(setGameReady(true));
 	};
 };

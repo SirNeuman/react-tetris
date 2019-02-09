@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import '../css/app.css';
 import { initializeGrid } from '../actions/main';
-import Player from './player';
+// import Player from './player';
 
 class Grid extends Component {
 
@@ -23,10 +23,18 @@ class Grid extends Component {
 		}
 		const grid = _.map(gridState, (row, rowIdx) => {
 			const spaces = _.map(row, (space, spaceIdx) => {
+				let spaceClass;
+				if (space === 0) {
+					spaceClass = 'empty';
+				} else if (space === 1) {
+					spaceClass = 'player';
+				} else {
+					spaceClass = 'filled'
+				}
 				return (
 					<div
 						key={'grid-space-' + rowIdx + '-' + spaceIdx}
-						className={'flex-1 grid-space ' + (space === true ? 'filled' : 'empty') }></div>
+						className={'flex-1 grid-space ' + spaceClass }></div>
 				);
 			});
 			return (

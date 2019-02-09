@@ -7510,6 +7510,10 @@ body {
 
 .grid-space {
   border: 1px solid #6E91A1; }
+  .grid-space.player {
+    opacity: 1;
+    border: 1px solid #AA5239;
+    background-color: #27556C; }
   .grid-space.filled {
     opacity: 1;
     border: 1px solid #AA5239;
