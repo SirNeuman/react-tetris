@@ -102,7 +102,6 @@ export const drawPlayerToGrid = () => {
 		const playerPosition = getState().Main.playerPosition;
 		const gridState= getState().Main.gridState;
 		const newGrid = _.map(gridState, (row, rowIndex) => {
-			console.log('xxx', row, playerPosition);
 			return _.map(row, (space, colIndex) => {
 				// Push the player onto the grid. the length of each row of the player state is equal,
 				// so we can assume that the first row length is the same as every other row.
@@ -156,7 +155,7 @@ export const movePlayerDown = () => {
 			playerPosition[0] += 1;
 			dispatch(setPlayerPosition(playerPosition));
 			dispatch(drawPlayerToGrid());
-			// dispatch(movePlayerDown());
+			dispatch(movePlayerDown());
 		}, getState().Main.speed);
 	};
 };
