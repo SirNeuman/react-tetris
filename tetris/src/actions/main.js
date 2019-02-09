@@ -255,9 +255,30 @@ export const movePlayerLeft = () => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
 		const playerState = getState().Main.playerState;
-		playerPosition[1] -= 1;
-		dispatch(setPlayerPosition(playerPosition));
-		dispatch(drawPlayerToGrid());
+		// Do not let player move left if left-most part of player would hit left edge of grid.
+		let currentPlayerFurthestLeftIndex = 0;
+		// Check the last column of every row. Once we have found the
+		let furthestLeftPieceFound = false;
+		_.range(_.size(playerState), (colIndex) => {
+			_.forEach(playerState, (playerRow) => {
+				if (playerRow[colIndex] === 1) {
+					furthestLeftPieceFound = true;
+					return false;
+				}
+			});
+			if (furthestLeftPieceFound) {
+				return false;
+			} else {
+				currentPlayerFurthestLeftIndex -= 1;
+			}
+		});
+		currentPlayerFurthestLeftIndex = currentPlayerFurthestLeftIndex + playerPosition[1];
+		console.log(currentPlayerFurthestLeftIndex);
+		if (currentPlayerFurthestLeftIndex > 0) {
+			playerPosition[1] -= 1;
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(drawPlayerToGrid());
+		}
 	};
 };
 
