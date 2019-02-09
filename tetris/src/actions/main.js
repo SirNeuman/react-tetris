@@ -147,15 +147,35 @@ export const addToTetrominoBag = () => {
 	};
 };
 
+export const checkPlayerHitEnd = () => {
+	return (dispatch, getState) => {
+		// if any of the player pieces will hit a 2 space on the grid or reaches the end of the grid convert the player object
+		// into 2 spaces and reinitialize the player at the top of the screen or
+		const playerState = getState().Main.playerState;
+		const playerPosition = getState().Main.playerPosition;
+		const gridState= getState().Main.gridState;
+		let hitEnd = false;
+		_.forEach(playerState, (row, rowIndex) => {
+			_.forEach(row, (playerSpace, colIndex) => {
+				if ((rowIndex + playerPosition[0] > _.size(gridState) - 1) ||
+					((playerSpace === 1) && (gridState[rowIndex + playerPosition[0]][colIndex + playerPosition[1]] === 2))) {
+					hitEnd = true;
+				}
+			});
+		});
+		console.log(hitEnd);
+	};
+};
+
 export const movePlayerDown = () => {
 	return (dispatch, getState) => {
-		console.log('what is happening?');
 		setTimeout(() => {
 			let playerPosition = getState().Main.playerPosition;
 			playerPosition[0] += 1;
 			dispatch(setPlayerPosition(playerPosition));
 			dispatch(drawPlayerToGrid());
 			dispatch(movePlayerDown());
+			dispatch(checkPlayerHitEnd());
 		}, getState().Main.speed);
 	};
 };

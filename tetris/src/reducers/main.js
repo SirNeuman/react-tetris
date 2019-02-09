@@ -7,7 +7,7 @@ const initialState = {
 	tetrominoes: null,
 	tetrominoBag: [],
 	playerPosition: null,
-	speed: 1000
+	speed: 500
 };
 
 const Main = (state = initialState, action) => {
