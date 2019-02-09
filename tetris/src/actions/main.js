@@ -136,7 +136,7 @@ export const addPlayerToGrid = () => {
 					if (playerState[rowIndex - playerPosition[0]][colIndex - playerPosition[1]] === 1) {
 						return 2;
 					} else {
-						return 0;
+						return space;
 					}
 				} else {
 					return space;
@@ -159,6 +159,7 @@ export const initializePlayer = () => {
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
 		dispatch(drawPlayerToGrid());
+		dispatch(movePlayerDown());
 	};
 };
 
@@ -178,34 +179,42 @@ export const checkPlayerHitEnd = () => {
 		// into 2 spaces and reinitialize the player at the top of the screen or
 		const playerState = getState().Main.playerState;
 		const playerPosition = getState().Main.playerPosition;
+		const nextPosition = [playerPosition[0] + 1, playerPosition[1]];
+		console.log()
 		const gridState= getState().Main.gridState;
 		let hitEnd = false;
 		_.forEach(playerState, (row, rowIndex) => {
 			_.forEach(row, (playerSpace, colIndex) => {
-				if ((rowIndex + playerPosition[0] > _.size(gridState) - 1) ||
-					((playerSpace === 1) && (gridState[rowIndex + playerPosition[0]][colIndex + playerPosition[1]] === 2))) {
+				if ((rowIndex + nextPosition[0] > _.size(gridState) - 1) ||
+					((playerSpace === 1) && (gridState[rowIndex + nextPosition[0]][colIndex + playerPosition[1]] === 2))) {
 					hitEnd = true;
 				}
 			});
 		});
 		if (hitEnd) {
+			// move player position back up 1 row.
+			const newPosition = [playerPosition[0] - 1, playerPosition[1]];
+			dispatch(setPlayerPosition(playerPosition));
 			// convert player into grid as 2's and reinitialize player at top of screen
 			dispatch(addPlayerToGrid());
 			dispatch(initializePlayer());
 		}
-		console.log(hitEnd);
+		return hitEnd;
 	};
 };
 
 export const movePlayerDown = () => {
 	return (dispatch, getState) => {
 		setTimeout(() => {
-			let playerPosition = getState().Main.playerPosition;
-			playerPosition[0] += 1;
-			dispatch(setPlayerPosition(playerPosition));
-			dispatch(drawPlayerToGrid());
-			dispatch(movePlayerDown());
-			dispatch(checkPlayerHitEnd());
+
+			const playerHitEnd = dispatch(checkPlayerHitEnd());
+			if (!playerHitEnd) {
+				let playerPosition = getState().Main.playerPosition;
+				playerPosition[0] += 1;
+				dispatch(setPlayerPosition(playerPosition));
+				dispatch(drawPlayerToGrid());
+				dispatch(movePlayerDown());
+			}
 		}, getState().Main.speed);
 	};
 };
@@ -216,7 +225,6 @@ export const initializeGame = () => {
 		dispatch(addToTetrominoBag());
 		dispatch(initializeGrid());
 		dispatch(initializePlayer());
-		dispatch(movePlayerDown());
 		dispatch(setGameReady(true));
 	};
 };
