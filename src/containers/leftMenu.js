@@ -5,15 +5,15 @@ class RightMenu extends Component {
 
 	render() {
 		return (
-			<div className="side-menu d-flex flex-column flex-1 justify-content-between align-items-end">
+			<div className="d-flex flex-column flex-1 justify-content-between align-items-end text-right">
 				<div>
 
 				</div>
 				<div>
-					<div>
+					<div className="mb-4">
 						SPEED LV
 					</div>
-					<div>
+					<div className="">
 						LINES
 					</div>
 				</div>
