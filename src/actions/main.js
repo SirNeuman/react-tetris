@@ -453,10 +453,9 @@ export const checkPlayerTopCollision = (playerState, playerPosition, gridState) 
 	return topCollision;
 };
 
-export const movePlayerUp = (playerState) => {
+export const movePlayerUp = (playerState, playerPosition) => {
 	return (dispatch, getState) => {
 		// This can only happen in the case where player hits Ground on rotation.
-		let playerPosition = getState().Main.playerPosition;
 		const nextPosition = [playerPosition[0] - 1, playerPosition[1]];
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
@@ -469,21 +468,22 @@ export const movePlayerUp = (playerState) => {
 	};
 };
 
-export const movePlayerRight = (playerState=null) => {
+export const movePlayerRight = (playerState=null, playerPosition=null) => {
 	return (dispatch, getState) => {
-		let playerPosition = getState().Main.playerPosition;
-		const nextPosition = [playerPosition[0], playerPosition[1] + 1];
 		// If player state is passed in that means we only want to check the player movement without actually moving the player.
 		// In this case just return the player position without setting it, or drawing the player to the grid.
 		let checkOnly = true;
 		if (playerState === null) {
 			checkOnly = false;
 			playerState = getState().Main.playerState;
+			playerPosition = getState().Main.playerPosition;
 		}
+		const nextPosition = [playerPosition[0], playerPosition[1] + 1];
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
 		let rightCollision = checkPlayerRightCollision(playerState, nextPosition, gridState);
 		if (checkOnly) {
+			console.log('3333', rightCollision);
 			if (rightCollision) {
 				return false;
 			} else {
@@ -496,19 +496,20 @@ export const movePlayerRight = (playerState=null) => {
 	};
 };
 
-export const movePlayerLeft = (playerState=null) => {
+export const movePlayerLeft = (playerState=null, playerPosition=null) => {
 	return (dispatch, getState) => {
-		let playerPosition = getState().Main.playerPosition;
-		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
 		let checkOnly = true;
 		if (playerState === null) {
 			checkOnly = false;
 			playerState = getState().Main.playerState;
+			playerPosition = getState().Main.playerPosition;
 		}
+		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
 		const leftCollision = checkPlayerLeftCollision(playerState, nextPosition, gridState);
 		if (checkOnly) {
+			console.log('2222', leftCollision);
 			if (leftCollision) {
 				return false;
 			} else {
@@ -534,22 +535,26 @@ export const checkPlayerCanRotate = (playerState) => {
 		let playerPosition = getState().Main.playerPosition;
 		let gridState = getState().Main.gridState;
 		while (!canNotRotate && !noCollisions) {
+			console.log('xxxx', canNotRotate, noCollisions);
 			if (checkPlayerBottomCollision(playerState, playerPosition, gridState)) {
-				const playerMovedUp = dispatch(movePlayerUp(playerPosition));
+				const playerMovedUp = dispatch(movePlayerUp(playerState, playerPosition));
+				console.log('uppp', playerMovedUp);
 				if (playerMovedUp === false) {
 					canNotRotate = true;
 				} else {
 					playerPosition = playerMovedUp;
 				}
 			} else if (checkPlayerRightCollision(playerState, playerPosition, gridState)) {
-				const playerMovedLeft = dispatch(movePlayerLeft(playerPosition));
+				const playerMovedLeft = dispatch(movePlayerLeft(playerState, playerPosition));
+				console.log('left', playerMovedLeft);
 				if (playerMovedLeft === false) {
 					canNotRotate = true;
 				} else {
 					playerPosition = playerMovedLeft;
 				}
 			} else if (checkPlayerLeftCollision(playerState, playerPosition, gridState)) {
-				const playerMovedRight = dispatch(movePlayerRight(playerPosition));
+				const playerMovedRight = dispatch(movePlayerRight(playerState, playerPosition));
+				console.log('right', playerMovedRight);
 				if (playerMovedRight === false) {
 					canNotRotate = true;
 				} else {

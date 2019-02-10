@@ -47,7 +47,6 @@ class RightMenu extends Component {
 
 		const nextTetrominoDisplay = _.map(nextTetromino, (row, rowIndex) => {
 			const spaces = _.map(row, (space, colIndex) => {
-				console.log('hello', space);
 				return (
 					<div
 						key={'next-tetromino-' + rowIndex + '-' + colIndex}
@@ -65,7 +64,6 @@ class RightMenu extends Component {
 		if (this.state.currentTime) {
 			timer = moment().startOf('day').seconds(this.state.currentTime.diff(gameStartTime, 'seconds')).format('HH:mm:ss');
 		}
-
 
 		return (
 			<div className="d-flex flex-column flex-1 justify-content-between align-items-start">
