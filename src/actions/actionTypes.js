@@ -8,3 +8,4 @@ export const SET_LINES_CLEARED = 'SET_LINES_CLEARED';
 export const SET_SPEED_LV = 'SET_SPEED_LV';
 export const SET_GAME_STARTED = 'SET_GAME_STARTED';
 export const SET_GAME_OVER = 'SET_GAME_OVER';
+export const SET_GAME_START_TIME = 'SET_GAME_START_TIME';

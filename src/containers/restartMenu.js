@@ -23,7 +23,7 @@ class RestartMenu extends Component {
 	render() {
 		return (
 			<div className="text-center p-2 menu">
-				<div>GAME OVER</div>
+				<div className="text-lg semibold">GAME OVER</div>
 				<div>Press "ENTER" to Restart</div>
 			</div>
 		);

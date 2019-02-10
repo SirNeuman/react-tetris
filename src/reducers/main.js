@@ -11,7 +11,8 @@ const initialState = {
 	linesCleared: 0,
 	speedLv: 1,
 	gameStarted: false,
-	gameOver: false
+	gameOver: false,
+	gameStartTime: null
 };
 
 const Main = (state = initialState, action) => {
@@ -65,6 +66,11 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				gameOver: action.gameOver
+			};
+		case types.SET_GAME_START_TIME:
+			return {
+				...state,
+				gameStartTime: action.gameStartTime
 			};
 		default:
 			return state;

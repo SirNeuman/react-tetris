@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import * as types from './actionTypes';
 
@@ -62,6 +63,13 @@ export const setGameOver = (gameOver) => {
 	return {
 		type: types.SET_GAME_OVER,
 		gameOver
+	};
+};
+
+export const setGameStartTime = (gameStartTime) => {
+	return {
+		type: types.SET_GAME_START_TIME,
+		gameStartTime
 	};
 };
 
@@ -617,7 +625,6 @@ export const startGame = () => {
 
 export const endGame = () => {
 	return (dispatch, getState) => {
-		console.log('hello?')
 		clearTimeout(dropPlayerTimer);
 		dispatch(setGameOver(true));
 	};
@@ -630,6 +637,7 @@ export const initializeGame = () => {
 		dispatch(initializeGrid());
 		dispatch(initializePlayer());
 		dispatch(setLinesCleared(0));
+		dispatch(setGameStartTime(moment()));
 		dispatch(setGameReady(true));
 	};
 };
