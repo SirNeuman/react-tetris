@@ -330,32 +330,96 @@ const checkPlayerLeftCollision = (playerState, playerPosition, gridState) => {
 	return leftCollision;
 };
 
-export const movePlayerRight = () => {
+export const movePlayerRight = (playerState=null) => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
 		const nextPosition = [playerPosition[0], playerPosition[1] + 1];
-		const playerState = getState().Main.playerState;
+		// If player state is passed in that means we only want to check the player movement without actually moving the player.
+		// In this case just return the player position without setting it, or drawing the player to the grid.
+		let checkOnly = true;
+		if (playerState === null) {
+			checkOnly = false;
+			playerState = getState().Main.playerState;
+		}
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
 		let rightCollision = checkPlayerRightCollision(playerState, nextPosition, gridState);
-		if (!rightCollision) {
+		if (checkOnly) {
+			if (rightCollision) {
+				return false;
+			} else {
+				return nextPosition;
+			}
+		} else if (!rightCollision) {
 			dispatch(setPlayerPosition(nextPosition));
 			dispatch(drawPlayerToGrid());
 		}
 	};
 };
 
-export const movePlayerLeft = () => {
+export const movePlayerLeft = (playerState=null) => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
 		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
-		const playerState = getState().Main.playerState;
+		let checkOnly = true;
+		if (playerState === null) {
+			checkOnly = false;
+			playerState = getState().Main.playerState;
+		}
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
 		const leftCollision = checkPlayerLeftCollision(playerState, nextPosition, gridState);
-		if (!leftCollision) {
+		if (checkOnly) {
+			console.log('should check???', nextPosition);
+			if (leftCollision) {
+				return false;
+			} else {
+				return nextPosition;
+			}
+		} else if (!leftCollision) {
 			dispatch(setPlayerPosition(nextPosition));
 			dispatch(drawPlayerToGrid());
+		}
+	};
+};
+
+export const checkPlayerCanRotate = (playerState) => {
+	return (dispatch, getState) => {
+		// Now we need to check if after rotating the player is outside the grid or shifted a 2 space.
+		// Try to move it in the opposite direction of what it is colliding into until it is not colliding.
+		// If shifting makes it collide, or colliding is unavoidable, do not allow player rotation.
+		let canNotRotate = false;
+		let noCollisions = false;
+		let playerPosition = getState().Main.playerPosition;
+		let gridState = getState().Main.gridState;
+		console.log('xxxx', playerPosition, playerState);
+		while (!canNotRotate && !noCollisions) {
+
+
+			if (checkPlayerRightCollision(playerState, playerPosition, gridState)) {
+				console.log('right collide');
+				const playerMovedLeft = dispatch(movePlayerLeft(playerPosition));
+				if (playerMovedLeft === false) {
+					canNotRotate = true;
+				} else {
+					playerPosition = playerMovedLeft;
+				}
+			} else if (checkPlayerLeftCollision(playerState, playerPosition, gridState)) {
+				console.log('left collide',);
+				const playerMovedRight = dispatch(movePlayerRight(playerPosition));
+				if (playerMovedRight === false) {
+					canNotRotate = true;
+				} else {
+					playerPosition = playerMovedRight;
+				}
+			} else {
+				noCollisions = true;
+			}
+		}
+		if (canNotRotate) {
+			return false;
+		} else {
+			return playerPosition;
 		}
 	};
 };
@@ -373,14 +437,13 @@ export const rotatePlayerCounterClockwise = () => {
 			});
 			newPlayerState.push(newPlayerRow);
 		});
-		// Now we need to check if after rotating the player is outside the grid or shifted a 2 space.
-		// Try to move it in the opposite direction of what it is colliding into until it is not colliding.
-		// If shifting makes it collide, or colliding is unavoidable, do not allow player rotation.
-		let playerPosition = getState().Main.playerPosition;
 
-
-		dispatch(setPlayerState(newPlayerState));
-		dispatch(drawPlayerToGrid());
+		const playerPosition = dispatch(checkPlayerCanRotate(newPlayerState));
+		if (playerPosition !== false) {
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(setPlayerState(newPlayerState));
+			dispatch(drawPlayerToGrid());
+		}
 	};
 };
 
@@ -398,8 +461,13 @@ export const rotatePlayerClockwise = () => {
 			});
 			newPlayerState.push(newPlayerRow);
 		});
-		dispatch(setPlayerState(newPlayerState));
-		dispatch(drawPlayerToGrid());
+
+		const playerPosition = dispatch(checkPlayerCanRotate(newPlayerState));
+		if (playerPosition !== false) {
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(setPlayerState(newPlayerState));
+			dispatch(drawPlayerToGrid());
+		}
 	};
 };
 
