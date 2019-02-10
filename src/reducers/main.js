@@ -8,7 +8,8 @@ const initialState = {
 	tetrominoBag: [],
 	playerPosition: null,
 	speed: 500,
-	linesCleared: 0
+	linesCleared: 0,
+	speedLv: 1
 };
 
 const Main = (state = initialState, action) => {
@@ -47,6 +48,11 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				linesCleared: action.linesCleared
+			};
+		case types.SET_SPEED_LV:
+			return {
+				...state,
+				speedLv: action.speedLV
 			};
 		default:
 			return state;
