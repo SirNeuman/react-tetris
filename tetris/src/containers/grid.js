@@ -3,12 +3,48 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 
 import '../css/app.css';
-import { initializeGrid } from '../actions/main';
-import Player from './player';
+import { initializeGrid,
+	movePlayerLeft,
+	movePlayerRight,
+	rotatePlayerCounterClockwise,
+	rotatePlayerClockwise,
+	movePlayerDown } from '../actions/main';
+// import Player from './player';
 
 class Grid extends Component {
+	constructor(props) {
+		super(props);
+		// controls will be:
+		// 	a (97) = left,
+		// 	d (100) = right,
+		// 	q (113) = rotate counter clockwise,
+		// 	e (101) = rotate clockwise,
+		// 	s (115) = move 1 space down
+		this.state = {
+			controls: {
+				97: this.props.movePlayerLeft,
+				100: this.props.movePlayerRight,
+				113: this.props.rotatePlayerCounterClockwise,
+				101: this.props.rotatePlayerClockwise,
+				115: this.props.movePlayerDown
+			}
+		};
+	}
 
+	handleKeyPress = (e) => {
+		const code = e.keyCode;
+		if (_.has(this.state.controls, code)) {
+			this.state.controls[code]();
+		}
+	}
 
+	componentDidMount() {
+		document.addEventListener('keypress', this.handleKeyPress);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('keypress', this.handleKeyPress);
+	}
 
 	render() {
 		const {
@@ -23,10 +59,18 @@ class Grid extends Component {
 		}
 		const grid = _.map(gridState, (row, rowIdx) => {
 			const spaces = _.map(row, (space, spaceIdx) => {
+				let spaceClass;
+				if (space === 0) {
+					spaceClass = 'empty';
+				} else if (space === 1) {
+					spaceClass = 'player';
+				} else {
+					spaceClass = 'filled';
+				}
 				return (
 					<div
 						key={'grid-space-' + rowIdx + '-' + spaceIdx}
-						className={'flex-1 grid-space ' + (space === true ? 'filled' : 'empty') }></div>
+						className={'flex-1 grid-space ' + spaceClass }></div>
 				);
 			});
 			return (
@@ -58,6 +102,21 @@ const mapDispatchToProps = (dispatch) => {
 		initializeGrid: () => {
 			dispatch(initializeGrid());
 		},
+		movePlayerLeft: () => {
+			dispatch(movePlayerLeft());
+		},
+		movePlayerRight: () => {
+			dispatch(movePlayerRight());
+		},
+		rotatePlayerCounterClockwise: () => {
+			dispatch(rotatePlayerCounterClockwise());
+		},
+		rotatePlayerClockwise: () => {
+			dispatch(rotatePlayerClockwise());
+		},
+		movePlayerDown: () => {
+			dispatch(movePlayerDown(true));
+		}
 	};
 };
 

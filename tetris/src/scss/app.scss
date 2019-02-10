@@ -53,6 +53,12 @@ body {
 .grid-space {
 	border: 1px solid $primary-light-color;
 
+	&.player {
+		opacity: 1;
+		border: 1px solid $secondary-color;
+		background-color: $primary-color;
+	}
+
 	&.filled {
 		opacity: 1;
 		border: 1px solid $secondary-color;

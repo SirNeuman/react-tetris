@@ -6,7 +6,8 @@ const initialState = {
 	playerState: null,
 	tetrominoes: null,
 	tetrominoBag: [],
-	playerPosition: null
+	playerPosition: null,
+	speed: 500
 };
 
 const Main = (state = initialState, action) => {
@@ -37,7 +38,6 @@ const Main = (state = initialState, action) => {
 				tetrominoBag: action.tetrominoBag
 			};
 		case types.SET_PLAYER_POSITION:
-			console.log('xxx', action.playerPosition);
 			return {
 				...state,
 				playerPosition: action.playerPosition
