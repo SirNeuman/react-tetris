@@ -173,7 +173,7 @@ export const initializePlayer = () => {
 		let tetrominoBag = getState().Main.tetrominoBag;
 		let playerTetromino = tetrominoBag.shift();
 		dispatch(setTetrominoBag(tetrominoBag));
-		if (_.size(tetrominoBag) < 2) {
+		if (_.size(tetrominoBag) < 3) {
 			dispatch(addToTetrominoBag());
 		}
 		dispatch(setPlayerState(playerTetromino));

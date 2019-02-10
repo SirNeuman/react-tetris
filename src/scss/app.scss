@@ -31,7 +31,6 @@ body {
 .grid-container {
 	padding-top: 200%;
 	position: relative;
-	margin-top: 20px;
 }
 
 .grid {
@@ -43,7 +42,18 @@ body {
 	right: 0;
 	height: 100%;
 	border-top: 0;
+}
 
+.next-tetromino-container {
+	.tetromino-block {
+		width: 20px;
+		height: 20px;
+
+		&.filled {
+			border: 1px solid $secondary-color;
+			background-color: $primary-color;
+		}
+	}
 }
 
 .game-container {

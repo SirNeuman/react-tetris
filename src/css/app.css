@@ -7492,8 +7492,7 @@ body {
 
 .grid-container {
   padding-top: 200%;
-  position: relative;
-  margin-top: 20px; }
+  position: relative; }
 
 .grid {
   border: 2px solid #27556C;
@@ -7504,6 +7503,13 @@ body {
   right: 0;
   height: 100%;
   border-top: 0; }
+
+.next-tetromino-container .tetromino-block {
+  width: 20px;
+  height: 20px; }
+  .next-tetromino-container .tetromino-block.filled {
+    border: 1px solid #AA5239;
+    background-color: #27556C; }
 
 .game-container {
   height: 100%; }
