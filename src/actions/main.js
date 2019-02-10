@@ -370,7 +370,6 @@ export const movePlayerLeft = (playerState=null) => {
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
 		const leftCollision = checkPlayerLeftCollision(playerState, nextPosition, gridState);
 		if (checkOnly) {
-			console.log('should check???', nextPosition);
 			if (leftCollision) {
 				return false;
 			} else {
@@ -392,12 +391,8 @@ export const checkPlayerCanRotate = (playerState) => {
 		let noCollisions = false;
 		let playerPosition = getState().Main.playerPosition;
 		let gridState = getState().Main.gridState;
-		console.log('xxxx', playerPosition, playerState);
 		while (!canNotRotate && !noCollisions) {
-
-
 			if (checkPlayerRightCollision(playerState, playerPosition, gridState)) {
-				console.log('right collide');
 				const playerMovedLeft = dispatch(movePlayerLeft(playerPosition));
 				if (playerMovedLeft === false) {
 					canNotRotate = true;
@@ -405,7 +400,6 @@ export const checkPlayerCanRotate = (playerState) => {
 					playerPosition = playerMovedLeft;
 				}
 			} else if (checkPlayerLeftCollision(playerState, playerPosition, gridState)) {
-				console.log('left collide',);
 				const playerMovedRight = dispatch(movePlayerRight(playerPosition));
 				if (playerMovedRight === false) {
 					canNotRotate = true;
