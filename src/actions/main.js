@@ -189,34 +189,36 @@ export const addPlayerToGrid = () => {
 
 export const initializePlayer = () => {
 	return (dispatch, getState) => {
-		// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
-		let tetrominoBag = getState().Main.tetrominoBag;
-		let playerTetromino = tetrominoBag.shift();
-		dispatch(setTetrominoBag(tetrominoBag));
-		if (_.size(tetrominoBag) < 3) {
-			dispatch(addToTetrominoBag());
-		}
-		dispatch(setPlayerState(playerTetromino));
-		const playerWidth = _.size(playerTetromino[0]);
-		// a row is 10 spaces. center the player column as much as possible
-		const startPlayerColumn = _.round((10 - playerWidth) / 2);
-		// start player row with the last filled row being at the top of the grid. (the odd one out is the line piece)
-		let numberOfEmptyLastRows = 0;
-		_.forEachRight(playerTetromino, (lastRow, lastRowIdx) => {
-			let isEmptyRow = _.every(lastRow, (space) => {
-				return space === 0;
-			});
-			if (isEmptyRow) {
-				numberOfEmptyLastRows += 1;
-			} else {
-				return false;
+		if (!getState().Main.gameOver) {
+			// Player is first tetromino out of bag. Starting position (top 0, left 0 depends on width of tetromino)
+			let tetrominoBag = getState().Main.tetrominoBag;
+			let playerTetromino = tetrominoBag.shift();
+			dispatch(setTetrominoBag(tetrominoBag));
+			if (_.size(tetrominoBag) < 3) {
+				dispatch(addToTetrominoBag());
 			}
-		});
-		const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino) + 1;
-		const playerPosition = [startPlayerRow, startPlayerColumn];
-		dispatch(setPlayerPosition(playerPosition));
-		dispatch(drawPlayerToGrid());
-		dispatch(movePlayerDown());
+			dispatch(setPlayerState(playerTetromino));
+			const playerWidth = _.size(playerTetromino[0]);
+			// a row is 10 spaces. center the player column as much as possible
+			const startPlayerColumn = _.round((10 - playerWidth) / 2);
+			// start player row with the last filled row being at the top of the grid. (the odd one out is the line piece)
+			let numberOfEmptyLastRows = 0;
+			_.forEachRight(playerTetromino, (lastRow, lastRowIdx) => {
+				let isEmptyRow = _.every(lastRow, (space) => {
+					return space === 0;
+				});
+				if (isEmptyRow) {
+					numberOfEmptyLastRows += 1;
+				} else {
+					return false;
+				}
+			});
+			const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino) + 1;
+			const playerPosition = [startPlayerRow, startPlayerColumn];
+			dispatch(setPlayerPosition(playerPosition));
+			dispatch(drawPlayerToGrid());
+			dispatch(movePlayerDown());
+		}
 	};
 };
 
@@ -293,26 +295,28 @@ let dropPlayerTimer = null;
 
 export const movePlayerDown = (manualTrigger=false) => {
 	return (dispatch, getState) => {
-		const dropPlayer = () => {
-			const playerHitEnd = dispatch(checkPlayerHitEnd());
-			if (!playerHitEnd) {
-				let playerPosition = getState().Main.playerPosition;
-				playerPosition[0] += 1;
-				dispatch(setPlayerPosition(playerPosition));
-				dispatch(drawPlayerToGrid());
-				dispatch(movePlayerDown());
-			}
-		};
-		if (manualTrigger) {
-			// Uere we need to clear the timeout and reset the timer for the next auto move player down, otherwise
-			// we'll have multiple timer's going and the drop speed will get crazy fast.
-			clearTimeout(dropPlayerTimer);
-			dropPlayer();
-			dispatch(movePlayerDown);
-		} else {
-			dropPlayerTimer = setTimeout(() => {
+		if (!getState().Main.gameOver) {
+			const dropPlayer = () => {
+				const playerHitEnd = dispatch(checkPlayerHitEnd());
+				if (!playerHitEnd) {
+					let playerPosition = getState().Main.playerPosition;
+					playerPosition[0] += 1;
+					dispatch(setPlayerPosition(playerPosition));
+					dispatch(drawPlayerToGrid());
+					dispatch(movePlayerDown());
+				}
+			};
+			if (manualTrigger) {
+				// Uere we need to clear the timeout and reset the timer for the next auto move player down, otherwise
+				// we'll have multiple timer's going and the drop speed will get crazy fast.
+				clearTimeout(dropPlayerTimer);
 				dropPlayer();
-			}, getState().Main.speed);
+				dispatch(movePlayerDown);
+			} else {
+				dropPlayerTimer = setTimeout(() => {
+					dropPlayer();
+				}, getState().Main.speed);
+			}
 		}
 	};
 };
@@ -603,7 +607,8 @@ export const rotatePlayerClockwise = () => {
 
 export const startGame = () => {
 	return (dispatch, getState) => {
-		if (!getState().Main.gameStarted) {
+		if (!getState().Main.gameStarted || getState().Main.gameOver) {
+			dispatch(setGameOver(false));
 			dispatch(initializeGame());
 			dispatch(setGameStarted(true));
 		}
@@ -612,7 +617,8 @@ export const startGame = () => {
 
 export const endGame = () => {
 	return (dispatch, getState) => {
-		dispatch(clearTimeout(dropPlayerTimer));
+		console.log('hello?')
+		clearTimeout(dropPlayerTimer);
 		dispatch(setGameOver(true));
 	};
 };

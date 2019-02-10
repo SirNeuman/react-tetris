@@ -10,7 +10,8 @@ import { initializeGrid,
 	rotatePlayerClockwise,
 	movePlayerDown,
 	startGame } from '../actions/main';
-// import Player from './player';
+import RestartMenu from './restartMenu';
+import StartMenu from './startMenu';
 
 class Grid extends Component {
 	constructor(props) {
@@ -27,21 +28,17 @@ class Grid extends Component {
 				100: this.props.movePlayerRight,
 				113: this.props.rotatePlayerCounterClockwise,
 				101: this.props.rotatePlayerClockwise,
-				115: this.props.movePlayerDown,
-				13: this.props.startGame
+				115: this.props.movePlayerDown
 			}
 		};
 	}
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
-		console.log(code);
-		if (_.has(this.state.controls, code)) {
+		if (!this.props.gameOver && _.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}
 	}
-
-
 
 	componentDidMount() {
 		document.addEventListener('keypress', this.handleKeyPress);
@@ -55,16 +52,16 @@ class Grid extends Component {
 		const {
 			gridState,
 			gameReady,
-			gameStarted
+			gameStarted,
+			gameOver
 		} = this.props;
 
 		let gridDisplay = null;
+		let startMenuScreen = null;
 
 		if (!gameStarted) {
-			gridDisplay = (
-				<div className="d-flex w-100 flex-1 justify-content-center align-items-center text-lg semibold text-primary">
-					Press "ENTER" to Start
-				</div>
+			startMenuScreen = (
+				<StartMenu/>
 			);
 		} else {
 			if (!gameReady) {
@@ -97,13 +94,21 @@ class Grid extends Component {
 			}
 		}
 
-
-
+		let restartMenuScreen = null;
+		if (gameOver) {
+			restartMenuScreen = (
+				<RestartMenu />
+			);
+		}
 
 		return (
-			<div className="grid-container">
+			<div className="grid-container d-flex justify-content-center align-items-center position-realtive">
 				<div className="grid d-flex flex-column">
 					{gridDisplay}
+				</div>
+				<div className="menu-container d-flex align-items-center justify-content-center">
+					{startMenuScreen}
+					{restartMenuScreen}
 				</div>
 			</div>
 		);
@@ -114,7 +119,8 @@ const mapStateToProps = (state) => {
 	return {
 		gridState: state.Main.gridState,
 		gameReady: state.Main.gameReady,
-		gameStarted: state.Main.gameStarted
+		gameStarted: state.Main.gameStarted,
+		gameOver: state.Main.gameOver
 	};
 };
 

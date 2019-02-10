@@ -7483,6 +7483,18 @@ body {
   color: #551300;
   font-family: 'Noto Sans KR', sans-serif; }
 
+.menu-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0; }
+  .menu-container .menu {
+    border: 1px solid #AA5239;
+    background: #F8F8F8; }
+    .menu-container .menu.no-border {
+      border: 0; }
+
 .flex-1 {
   flex: 1; }
 
