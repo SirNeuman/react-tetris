@@ -7,6 +7,11 @@ $primary-light-color: #6E91A1;
 $primary-color: #27556C;
 $secondary-color: #AA5239;
 
+$theme-colors: (
+	'primary': $primary-color,
+	'secondary': $secondary-color
+);
+
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 body {
@@ -15,9 +20,22 @@ body {
 	font-family: 'Noto Sans KR', sans-serif;
 }
 
-.app {
+.menu-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
 
+	.menu {
+		border: 1px solid $secondary-color;
+		background: $light-color;
+		&.no-border {
+			border: 0;
+		}
+	}
 }
+
 
 .flex-1 {
 	flex: 1;
@@ -31,7 +49,6 @@ body {
 .grid-container {
 	padding-top: 200%;
 	position: relative;
-	margin-top: 20px;
 }
 
 .grid {
@@ -43,6 +60,29 @@ body {
 	right: 0;
 	height: 100%;
 	border-top: 0;
+}
+
+.next-tetromino-container {
+	.tetromino-block {
+		width: 20px;
+		height: 20px;
+
+		&.filled {
+			border: 1px solid $secondary-color;
+			background-color: $primary-color;
+		}
+	}
+}
+
+.text-lg {
+	font-size: 1.5em;
+}
+
+.semibold {
+	font-weight: 500;
+}
+
+.start-prompt {
 
 }
 

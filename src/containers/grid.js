@@ -8,8 +8,10 @@ import { initializeGrid,
 	movePlayerRight,
 	rotatePlayerCounterClockwise,
 	rotatePlayerClockwise,
-	movePlayerDown } from '../actions/main';
-// import Player from './player';
+	movePlayerDown,
+	startGame } from '../actions/main';
+import RestartMenu from './restartMenu';
+import StartMenu from './startMenu';
 
 class Grid extends Component {
 	constructor(props) {
@@ -33,7 +35,7 @@ class Grid extends Component {
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
-		if (_.has(this.state.controls, code)) {
+		if (!this.props.gameOver && _.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}
 	}
@@ -49,41 +51,64 @@ class Grid extends Component {
 	render() {
 		const {
 			gridState,
-			gameReady
+			gameReady,
+			gameStarted,
+			gameOver
 		} = this.props;
 
-		if (!gameReady) {
-			return (
-				<div>LOADING...</div>
+		let gridDisplay = null;
+		let startMenuScreen = null;
+
+		if (!gameStarted) {
+			startMenuScreen = (
+				<StartMenu/>
+			);
+		} else {
+			if (!gameReady) {
+				gridDisplay = (
+					<div className="text-center">LOADING...</div>
+				);
+			} else {
+				gridDisplay = _.map(gridState, (row, rowIdx) => {
+					const spaces = _.map(row, (space, spaceIdx) => {
+						let spaceClass;
+						if (space === 0) {
+							spaceClass = 'empty';
+						} else if (space === 1) {
+							spaceClass = 'player';
+						} else {
+							spaceClass = 'filled';
+						}
+						return (
+							<div
+								key={'grid-space-' + rowIdx + '-' + spaceIdx}
+								className={'flex-1 grid-space ' + spaceClass }></div>
+						);
+					});
+					return (
+						<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
+							{spaces}
+						</div>
+					);
+				});
+			}
+		}
+
+		let restartMenuScreen = null;
+		if (gameOver) {
+			restartMenuScreen = (
+				<RestartMenu />
 			);
 		}
-		const grid = _.map(gridState, (row, rowIdx) => {
-			const spaces = _.map(row, (space, spaceIdx) => {
-				let spaceClass;
-				if (space === 0) {
-					spaceClass = 'empty';
-				} else if (space === 1) {
-					spaceClass = 'player';
-				} else {
-					spaceClass = 'filled';
-				}
-				return (
-					<div
-						key={'grid-space-' + rowIdx + '-' + spaceIdx}
-						className={'flex-1 grid-space ' + spaceClass }></div>
-				);
-			});
-			return (
-				<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
-					{spaces}
-				</div>
-			);
-		});
 
 		return (
-			<div className="grid-container">
+			<div className="grid-container d-flex justify-content-center align-items-center position-realtive">
 				<div className="grid d-flex flex-column">
-					{grid}
+					{gridDisplay}
+				</div>
+				<div className="menu-container d-flex align-items-center justify-content-center">
+					{startMenuScreen}
+					{restartMenuScreen}
 				</div>
 			</div>
 		);
@@ -93,7 +118,9 @@ class Grid extends Component {
 const mapStateToProps = (state) => {
 	return {
 		gridState: state.Main.gridState,
-		gameReady: state.Main.gameReady
+		gameReady: state.Main.gameReady,
+		gameStarted: state.Main.gameStarted,
+		gameOver: state.Main.gameOver
 	};
 };
 
@@ -116,6 +143,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		movePlayerDown: () => {
 			dispatch(movePlayerDown(true));
+		},
+		startGame: () => {
+			dispatch(startGame());
 		}
 	};
 };
