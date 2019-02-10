@@ -58,6 +58,13 @@ export const setGameStarted = (gameStarted) => {
 	};
 };
 
+export const setGameOver = (gameOver) => {
+	return {
+		type: types.SET_GAME_OVER,
+		gameOver
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
@@ -156,12 +163,18 @@ export const addPlayerToGrid = () => {
 		const gridState = getState().Main.gridState;
 		const newGrid = _.map(gridState, (row, rowIndex) => {
 			return _.map(row, (space, colIndex) => {
+
 				// Push the player onto the grid. the length of each row of the player state is equal,
 				// so we can assume that the first row length is the same as every other row.
 				if ((rowIndex >= playerPosition[0]) && (rowIndex < (_.size(playerState) + playerPosition[0]))
 					&& (colIndex >= playerPosition[1]) && (colIndex < (_.size(playerState[0]) + playerPosition[1]))) {
 					if (playerState[rowIndex - playerPosition[0]][colIndex - playerPosition[1]] === 1) {
-						return 2;
+						// If the player position is overlapping a 2 space the game is over.
+						if (space === 2) {
+							dispatch(endGame());
+						} else {
+							return 2;
+						}
 					} else {
 						return space;
 					}
@@ -510,7 +523,6 @@ export const checkPlayerCanRotate = (playerState) => {
 		let gridState = getState().Main.gridState;
 		while (!canNotRotate && !noCollisions) {
 			if (checkPlayerBottomCollision(playerState, playerPosition, gridState)) {
-				console.log('whatttt????', playerState, playerPosition)
 				const playerMovedUp = dispatch(movePlayerUp(playerPosition));
 				if (playerMovedUp === false) {
 					canNotRotate = true;
@@ -595,6 +607,13 @@ export const startGame = () => {
 			dispatch(initializeGame());
 			dispatch(setGameStarted(true));
 		}
+	};
+};
+
+export const endGame = () => {
+	return (dispatch, getState) => {
+		dispatch(clearTimeout(dropPlayerTimer));
+		dispatch(setGameOver(true));
 	};
 };
 
