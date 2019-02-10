@@ -22,7 +22,7 @@ class App extends Component {
 
 		return (
 			<div className="app container">
-				<div className="welcome-title w-100 text-center">Tetris</div>
+				<div className="welcome-title w-100 text-center text-secondary">TETRIS</div>
 				<div className="row game-container">
 					<div className="col d-flex flex-column">
 						{leftMenuComponent}
