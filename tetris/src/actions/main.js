@@ -267,29 +267,34 @@ export const movePlayerDown = (manualTrigger=false) => {
 export const movePlayerLeft = () => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
+		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
 		const playerState = getState().Main.playerState;
-		// Do not let player move left if left-most part of player would hit left edge of grid.
-		let currentPlayerFurthestLeftIndex = 0;
-		// Check the last column of every row. Once we have found the
-		let furthestLeftPieceFound = false;
-		_.forEach(playerState[0], (col, colIndex) => {
-			_.forEach(playerState, (playerRow) => {
-				if (playerRow[colIndex] === 1) {
-					furthestLeftPieceFound = true;
+		const gridState = getState().Main.gridState;
+		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
+		let canMoveLeft = true;
+		_.forEach(playerState, (row, rowIndex) => {
+			_.forEach(row, (space, colIndex) => {
+				let nextColPosition = colIndex + nextPosition[1];
+				if (space === 1) {
+					if (nextPosition[0] < 0) {
+						if (nextColPosition < 0) {
+							canMoveLeft = false;
+						}
+					} else if ((nextColPosition < 0) ||
+						(gridState[rowIndex + nextPosition[0]][colIndex + nextPosition[1]] === 2)) {
+						canMoveLeft = false;
+					}
+				}
+				if (!canMoveLeft) {
 					return false;
 				}
 			});
-			if (furthestLeftPieceFound) {
+			if (!canMoveLeft) {
 				return false;
-			} else {
-				currentPlayerFurthestLeftIndex += 1;
 			}
 		});
-		currentPlayerFurthestLeftIndex = currentPlayerFurthestLeftIndex + playerPosition[1];
-		console.log(currentPlayerFurthestLeftIndex);
-		if (currentPlayerFurthestLeftIndex > 0) {
-			playerPosition[1] -= 1;
-			dispatch(setPlayerPosition(playerPosition));
+		if (canMoveLeft) {
+			dispatch(setPlayerPosition(nextPosition));
 			dispatch(drawPlayerToGrid());
 		}
 	};
@@ -298,31 +303,42 @@ export const movePlayerLeft = () => {
 export const movePlayerRight = () => {
 	return (dispatch, getState) => {
 		let playerPosition = getState().Main.playerPosition;
+		const nextPosition = [playerPosition[0], playerPosition[1] + 1];
 		const playerState = getState().Main.playerState;
-		// Do not let player move right if right-most part of player would hit right edge of grid.
-		let currentPlayerFurthestRightIndex = _.size(playerState);
-		// Check the last column of every row. Once we have found the
-		let furthestRightPieceFound = false;
-		_.forEachRight(playerState[0], (col, colIndex) => {
-			_.forEach(playerState, (row) => {
-				if (row[colIndex] === 1) {
-					furthestRightPieceFound = true;
+		const gridState = getState().Main.gridState;
+		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
+		let canMoveRight = true;
+		_.forEach(playerState, (row, rowIndex) => {
+			_.forEach(row, (space, colIndex) => {
+				let nextColPosition = colIndex + nextPosition[1];
+				// if the row is negative we only need to check if the column is outside the grid, otherwise we need
+				// to check if we are about to hit a 2 space.
+				if (space === 1) {
+					if (nextPosition[0] < 0) {
+						if ((nextColPosition > _.size(gridState[0]) - 1)) {
+							canMoveRight = false;
+						}
+					} else {
+						if (nextColPosition > -1) {
+							if ((nextColPosition > _.size(gridState[0]) - 1) ||
+								(gridState[rowIndex + nextPosition[0]][colIndex + nextPosition[1]] === 2)) {
+								canMoveRight = false;
+							}
+						}
+					}
+				}
+				if (!canMoveRight) {
 					return false;
 				}
 			});
-			if (furthestRightPieceFound) {
+			if (!canMoveRight) {
 				return false;
-			} else {
-				currentPlayerFurthestRightIndex -= 1;
 			}
 		});
-		currentPlayerFurthestRightIndex = currentPlayerFurthestRightIndex + playerPosition[1];
-		if (currentPlayerFurthestRightIndex < _.size(getState().Main.gridState[0])) {
-			playerPosition[1] += 1;
-			dispatch(setPlayerPosition(playerPosition));
+		if (canMoveRight) {
+			dispatch(setPlayerPosition(nextPosition));
 			dispatch(drawPlayerToGrid());
 		}
-
 	};
 };
 
@@ -339,6 +355,9 @@ export const rotatePlayerCounterClockwise = () => {
 			});
 			newPlayerState.push(newPlayerRow);
 		});
+		// Now we need to check if after rotating the player is outside the grid. If they are shift them over horizontally
+		// until they are back inside.
+
 		dispatch(setPlayerState(newPlayerState));
 		dispatch(drawPlayerToGrid());
 	};
