@@ -44,6 +44,13 @@ export const setTetrominoBag = (tetrominoBag) => {
 	};
 };
 
+export const setLinesCleared = (linesCleared) => {
+	return {
+		type: types.SET_LINES_CLEARED,
+		linesCleared
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
@@ -205,7 +212,26 @@ export const addToTetrominoBag = () => {
 
 export const checkLineClear = () => {
 	return (dispatch, getState) => {
-
+		const gridState = getState().Main.gridState;
+		const linesCleared = _.remove(gridState, (row) => {
+			return _.every(row, (space) => {
+				return space === 2;
+			});
+		});
+		if (linesCleared) {
+			let totalLinesCleared = getState().Main.linesCleared;
+			totalLinesCleared += _.size(linesCleared);
+			dispatch(setLinesCleared(totalLinesCleared));
+			// add blank rows to beginning of grid for number of lines that were cleared
+			const emptyRow = _.map(_.range(10), (space) => {
+				return 0;
+			});
+			let newRows = _.map(_.range(_.size(linesCleared)), (row) => {
+				return emptyRow;
+			});
+			const newGridState = _.concat(newRows, gridState);
+			dispatch(setGridState(newGridState));
+		}
 	};
 };
 
@@ -233,10 +259,10 @@ export const checkPlayerHitEnd = () => {
 			});
 		});
 		if (hitEnd) {
-			dispatch(checkLineClear());
 			dispatch(setPlayerPosition(playerPosition));
 			// convert player into grid as 2's and reinitialize player at top of screen
 			dispatch(addPlayerToGrid());
+			dispatch(checkLineClear());
 			dispatch(initializePlayer());
 		}
 		return hitEnd;
@@ -447,7 +473,6 @@ export const rotatePlayerClockwise = () => {
 		// Rotating the square 2D array clockwise is a matter of rebulding the same 2D array,
 		// with all of the items, starting from the first column, and moving them into rows from the top down.
 		let newPlayerState = [];
-		console.log(_.size(playerState));
 		_.forEach(playerState[0], (col, colIndex) => {
 			let newPlayerRow = [];
 			_.forEachRight(playerState, (row, rowIndex) => {
@@ -471,6 +496,7 @@ export const initializeGame = () => {
 		dispatch(addToTetrominoBag());
 		dispatch(initializeGrid());
 		dispatch(initializePlayer());
+		dispatch(setLinesCleared(0));
 		dispatch(setGameReady(true));
 	};
 };
