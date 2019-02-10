@@ -335,6 +335,7 @@ const checkPlayerLeftCollision = (playerState, playerPosition, gridState) => {
 	_.forEach(playerState, (row, rowIndex) => {
 		_.forEach(row, (space, colIndex) => {
 			let positionToCheck = [rowIndex + playerPosition[0], colIndex + playerPosition[1]];
+
 			if (space === 1) {
 				if (playerPosition[0] < 0) {
 					if (positionToCheck[1] < 0) {
@@ -362,13 +363,16 @@ const checkPlayerBottomCollision = (playerState, playerPosition, gridState) => {
 		_.forEach(row, (space, colIndex) => {
 			if (space === 1) {
 				let positionToCheck = [rowIndex + playerPosition[0], colIndex + playerPosition[1]];
-				// just return if position to check of column is not on grid
-				if (positionToCheck[1] > _.size(gridState[0]) - 1 || positionToCheck[1] < 0) {
+				// just return if position to check of column is not off right or left side of grid, or row is above grid
+				if (
+					positionToCheck[1] > _.size(gridState[0]) - 1 ||
+					positionToCheck[1] < 0 ||
+					positionToCheck[0] < 0) {
 					return;
 				}
 				if (positionToCheck[0] === 0) {
 					// if we have already collided on the first row then it's game over
-					if (gridState[rowIndex + playerPosition[0]][colIndex + playerPosition[1]] === 2) {
+					if (gridState[positionToCheck[0]][positionToCheck[1]] === 2) {
 						bottomCollision = true;
 						console.log('game over');
 					}
@@ -394,14 +398,15 @@ export const checkPlayerTopCollision = (playerState, playerPosition, gridState) 
 		_.forEach(row, (space, colIndex) => {
 			if (space === 1) {
 				let positionToCheck = [rowIndex + playerPosition[0], colIndex + playerPosition[1]];
-				// just return if position to check of column is not on grid
-				if (positionToCheck[1] > _.size(gridState[0]) - 1 || positionToCheck[1] < 0) {
+				// just return if any space is off the grid
+				if (
+					positionToCheck[1] > _.size(gridState[0]) - 1 ||
+					positionToCheck[1] < 0 ||
+					positionToCheck[0] > _.size(gridState) - 1 ||
+					positionToCheck[0] < 0) {
 					return;
 				}
-				if (positionToCheck[0] < 0) {
-					// we don't need to check if the row is off the grid
-					return;
-				} else if (gridState[positionToCheck[0]][positionToCheck[1]] === 2) {
+				if (gridState[positionToCheck[0]][positionToCheck[1]] === 2) {
 					topCollision = true;
 				}
 			}
@@ -498,6 +503,7 @@ export const checkPlayerCanRotate = (playerState) => {
 		let gridState = getState().Main.gridState;
 		while (!canNotRotate && !noCollisions) {
 			if (checkPlayerBottomCollision(playerState, playerPosition, gridState)) {
+				console.log('whatttt????', playerState, playerPosition)
 				const playerMovedUp = dispatch(movePlayerUp(playerPosition));
 				if (playerMovedUp === false) {
 					canNotRotate = true;
