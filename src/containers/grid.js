@@ -8,7 +8,8 @@ import { initializeGrid,
 	movePlayerRight,
 	rotatePlayerCounterClockwise,
 	rotatePlayerClockwise,
-	movePlayerDown } from '../actions/main';
+	movePlayerDown,
+	startGame } from '../actions/main';
 // import Player from './player';
 
 class Grid extends Component {
@@ -26,17 +27,21 @@ class Grid extends Component {
 				100: this.props.movePlayerRight,
 				113: this.props.rotatePlayerCounterClockwise,
 				101: this.props.rotatePlayerClockwise,
-				115: this.props.movePlayerDown
+				115: this.props.movePlayerDown,
+				13: this.props.startGame
 			}
 		};
 	}
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
+		console.log(code);
 		if (_.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}
 	}
+
+
 
 	componentDidMount() {
 		document.addEventListener('keypress', this.handleKeyPress);
@@ -49,41 +54,56 @@ class Grid extends Component {
 	render() {
 		const {
 			gridState,
-			gameReady
+			gameReady,
+			gameStarted
 		} = this.props;
 
-		if (!gameReady) {
-			return (
-				<div>LOADING...</div>
-			);
-		}
-		const grid = _.map(gridState, (row, rowIdx) => {
-			const spaces = _.map(row, (space, spaceIdx) => {
-				let spaceClass;
-				if (space === 0) {
-					spaceClass = 'empty';
-				} else if (space === 1) {
-					spaceClass = 'player';
-				} else {
-					spaceClass = 'filled';
-				}
-				return (
-					<div
-						key={'grid-space-' + rowIdx + '-' + spaceIdx}
-						className={'flex-1 grid-space ' + spaceClass }></div>
-				);
-			});
-			return (
-				<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
-					{spaces}
+		let gridDisplay = null;
+
+		if (!gameStarted) {
+			gridDisplay = (
+				<div className="d-flex w-100 flex-1 justify-content-center align-items-center text-lg semibold text-primary">
+					Press "ENTER" to Start
 				</div>
 			);
-		});
+		} else {
+			if (!gameReady) {
+				gridDisplay = (
+					<div className="text-center">LOADING...</div>
+				);
+			} else {
+				gridDisplay = _.map(gridState, (row, rowIdx) => {
+					const spaces = _.map(row, (space, spaceIdx) => {
+						let spaceClass;
+						if (space === 0) {
+							spaceClass = 'empty';
+						} else if (space === 1) {
+							spaceClass = 'player';
+						} else {
+							spaceClass = 'filled';
+						}
+						return (
+							<div
+								key={'grid-space-' + rowIdx + '-' + spaceIdx}
+								className={'flex-1 grid-space ' + spaceClass }></div>
+						);
+					});
+					return (
+						<div key={'grid-row-' + rowIdx} className="d-flex flex-row flex-1">
+							{spaces}
+						</div>
+					);
+				});
+			}
+		}
+
+
+
 
 		return (
 			<div className="grid-container">
 				<div className="grid d-flex flex-column">
-					{grid}
+					{gridDisplay}
 				</div>
 			</div>
 		);
@@ -93,7 +113,8 @@ class Grid extends Component {
 const mapStateToProps = (state) => {
 	return {
 		gridState: state.Main.gridState,
-		gameReady: state.Main.gameReady
+		gameReady: state.Main.gameReady,
+		gameStarted: state.Main.gameStarted
 	};
 };
 
@@ -116,6 +137,9 @@ const mapDispatchToProps = (dispatch) => {
 		},
 		movePlayerDown: () => {
 			dispatch(movePlayerDown(true));
+		},
+		startGame: () => {
+			dispatch(startGame());
 		}
 	};
 };

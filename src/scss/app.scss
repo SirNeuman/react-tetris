@@ -7,6 +7,10 @@ $primary-light-color: #6E91A1;
 $primary-color: #27556C;
 $secondary-color: #AA5239;
 
+$theme-colors: (
+	'primary': $primary-color
+);
+
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
 body {
@@ -62,6 +66,10 @@ body {
 
 .semibold {
 	font-weight: 500;
+}
+
+.start-prompt {
+
 }
 
 .game-container {

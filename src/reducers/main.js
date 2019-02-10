@@ -9,7 +9,9 @@ const initialState = {
 	playerPosition: null,
 	speed: 500,
 	linesCleared: 0,
-	speedLv: 1
+	speedLv: 1,
+	gameStarted: false,
+	gameOver: false
 };
 
 const Main = (state = initialState, action) => {
@@ -53,6 +55,16 @@ const Main = (state = initialState, action) => {
 			return {
 				...state,
 				speedLv: action.speedLV
+			};
+		case types.SET_GAME_STARTED:
+			return {
+				...state,
+				gameStarted: action.gameStarted
+			};
+		case types.SET_GAME_OVER:
+			return {
+				...state,
+				gameOver: action.gameOver
 			};
 		default:
 			return state;

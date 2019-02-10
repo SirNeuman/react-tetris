@@ -51,6 +51,13 @@ export const setLinesCleared = (linesCleared) => {
 	};
 };
 
+export const setGameStarted = (gameStarted) => {
+	return {
+		type: types.SET_GAME_STARTED,
+		gameStarted
+	};
+};
+
 
 /*
 The following are asynchronous thunk actions.
@@ -578,6 +585,15 @@ export const rotatePlayerClockwise = () => {
 			dispatch(setPlayerPosition(playerPosition));
 			dispatch(setPlayerState(newPlayerState));
 			dispatch(drawPlayerToGrid());
+		}
+	};
+};
+
+export const startGame = () => {
+	return (dispatch, getState) => {
+		if (!getState().Main.gameStarted) {
+			dispatch(initializeGame());
+			dispatch(setGameStarted(true));
 		}
 	};
 };
