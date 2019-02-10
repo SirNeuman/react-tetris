@@ -185,7 +185,7 @@ export const initializePlayer = () => {
 				return false;
 			}
 		});
-		const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino);
+		const startPlayerRow = numberOfEmptyLastRows - _.size(playerTetromino) + 1;
 		const playerPosition = [startPlayerRow, startPlayerColumn];
 		dispatch(setPlayerPosition(playerPosition));
 		dispatch(drawPlayerToGrid());
