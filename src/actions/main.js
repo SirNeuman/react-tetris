@@ -203,6 +203,12 @@ export const addToTetrominoBag = () => {
 	};
 };
 
+export const checkLineClear = () => {
+	return (dispatch, getState) => {
+
+	};
+};
+
 export const checkPlayerHitEnd = () => {
 	return (dispatch, getState) => {
 		// if any of the player pieces will hit a 2 space on the grid or reaches the end of the grid convert the player object
@@ -227,6 +233,7 @@ export const checkPlayerHitEnd = () => {
 			});
 		});
 		if (hitEnd) {
+			dispatch(checkLineClear());
 			dispatch(setPlayerPosition(playerPosition));
 			// convert player into grid as 2's and reinitialize player at top of screen
 			dispatch(addPlayerToGrid());
@@ -264,40 +271,63 @@ export const movePlayerDown = (manualTrigger=false) => {
 	};
 };
 
-export const movePlayerLeft = () => {
-	return (dispatch, getState) => {
-		let playerPosition = getState().Main.playerPosition;
-		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
-		const playerState = getState().Main.playerState;
-		const gridState = getState().Main.gridState;
-		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
-		let canMoveLeft = true;
-		_.forEach(playerState, (row, rowIndex) => {
-			_.forEach(row, (space, colIndex) => {
-				let nextColPosition = colIndex + nextPosition[1];
-				if (space === 1) {
-					if (nextPosition[0] < 0) {
-						if (nextColPosition < 0) {
-							canMoveLeft = false;
+const checkPlayerRightCollision = (playerState, playerPosition, gridState) => {
+	let rightCollision = false;
+	_.forEach(playerState, (row, rowIndex) => {
+		_.forEach(row, (space, colIndex) => {
+			let nextColPosition = colIndex + playerPosition[1];
+			// if the row is negative we only need to check if the column is outside the grid, otherwise we need
+			// to check if we are about to hit a 2 space.
+			if (space === 1) {
+				if (playerPosition[0] < 0) {
+					if ((nextColPosition > _.size(gridState[0]) - 1)) {
+						rightCollision = true;
+					}
+				} else {
+					if (nextColPosition > -1) {
+						if ((nextColPosition > _.size(gridState[0]) - 1) ||
+							(gridState[rowIndex + playerPosition[0]][colIndex + playerPosition[1]] === 2)) {
+							rightCollision = true;
 						}
-					} else if ((nextColPosition < 0) ||
-						(gridState[rowIndex + nextPosition[0]][colIndex + nextPosition[1]] === 2)) {
-						canMoveLeft = false;
 					}
 				}
-				if (!canMoveLeft) {
-					return false;
-				}
-			});
-			if (!canMoveLeft) {
+			}
+			// minor optimization: this just breaks us out of the forEach loop.
+			if (rightCollision) {
 				return false;
 			}
 		});
-		if (canMoveLeft) {
-			dispatch(setPlayerPosition(nextPosition));
-			dispatch(drawPlayerToGrid());
+		if (rightCollision) {
+			return false;
 		}
-	};
+	});
+	return rightCollision;
+};
+
+const checkPlayerLeftCollision = (playerState, playerPosition, gridState) => {
+	let leftCollision = false;
+	_.forEach(playerState, (row, rowIndex) => {
+		_.forEach(row, (space, colIndex) => {
+			let nextColPosition = colIndex + playerPosition[1];
+			if (space === 1) {
+				if (playerPosition[0] < 0) {
+					if (nextColPosition < 0) {
+						leftCollision = true;
+					}
+				} else if ((nextColPosition < 0) ||
+					(gridState[rowIndex + playerPosition[0]][colIndex + playerPosition[1]] === 2)) {
+					leftCollision = true;
+				}
+			}
+			if (leftCollision) {
+				return false;
+			}
+		});
+		if (leftCollision) {
+			return false;
+		}
+	});
+	return leftCollision;
 };
 
 export const movePlayerRight = () => {
@@ -307,35 +337,23 @@ export const movePlayerRight = () => {
 		const playerState = getState().Main.playerState;
 		const gridState = getState().Main.gridState;
 		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
-		let canMoveRight = true;
-		_.forEach(playerState, (row, rowIndex) => {
-			_.forEach(row, (space, colIndex) => {
-				let nextColPosition = colIndex + nextPosition[1];
-				// if the row is negative we only need to check if the column is outside the grid, otherwise we need
-				// to check if we are about to hit a 2 space.
-				if (space === 1) {
-					if (nextPosition[0] < 0) {
-						if ((nextColPosition > _.size(gridState[0]) - 1)) {
-							canMoveRight = false;
-						}
-					} else {
-						if (nextColPosition > -1) {
-							if ((nextColPosition > _.size(gridState[0]) - 1) ||
-								(gridState[rowIndex + nextPosition[0]][colIndex + nextPosition[1]] === 2)) {
-								canMoveRight = false;
-							}
-						}
-					}
-				}
-				if (!canMoveRight) {
-					return false;
-				}
-			});
-			if (!canMoveRight) {
-				return false;
-			}
-		});
-		if (canMoveRight) {
+		let rightCollision = checkPlayerRightCollision(playerState, nextPosition, gridState);
+		if (!rightCollision) {
+			dispatch(setPlayerPosition(nextPosition));
+			dispatch(drawPlayerToGrid());
+		}
+	};
+};
+
+export const movePlayerLeft = () => {
+	return (dispatch, getState) => {
+		let playerPosition = getState().Main.playerPosition;
+		const nextPosition = [playerPosition[0], playerPosition[1] - 1];
+		const playerState = getState().Main.playerState;
+		const gridState = getState().Main.gridState;
+		// check boundaries of grid and check that that none of the blocks would be moving into a 2 spot.
+		const leftCollision = checkPlayerLeftCollision(playerState, nextPosition, gridState);
+		if (!leftCollision) {
 			dispatch(setPlayerPosition(nextPosition));
 			dispatch(drawPlayerToGrid());
 		}
@@ -355,8 +373,11 @@ export const rotatePlayerCounterClockwise = () => {
 			});
 			newPlayerState.push(newPlayerRow);
 		});
-		// Now we need to check if after rotating the player is outside the grid. If they are shift them over horizontally
-		// until they are back inside.
+		// Now we need to check if after rotating the player is outside the grid or shifted a 2 space.
+		// Try to move it in the opposite direction of what it is colliding into until it is not colliding.
+		// If shifting makes it collide, or colliding is unavoidable, do not allow player rotation.
+		let playerPosition = getState().Main.playerPosition;
+
 
 		dispatch(setPlayerState(newPlayerState));
 		dispatch(drawPlayerToGrid());
