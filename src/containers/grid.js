@@ -17,35 +17,39 @@ class Grid extends Component {
 	constructor(props) {
 		super(props);
 		// controls will be:
-		// 	a (97) = left,
-		// 	d (100) = right,
-		// 	q (113) = rotate counter clockwise,
-		// 	e (101) = rotate clockwise,
-		// 	s (115) = move 1 space down
+		// 	a (65) / Left arrow key (37) = left,
+		// 	d (68) / Right arrow key (39) = right,
+		// 	q (81) = rotate counter clockwise,
+		// 	e (69) = rotate clockwise,
+		// 	s (83) / down arrow key (40) = move 1 space down
 		this.state = {
 			controls: {
-				97: this.props.movePlayerLeft,
-				100: this.props.movePlayerRight,
-				113: this.props.rotatePlayerCounterClockwise,
-				101: this.props.rotatePlayerClockwise,
-				115: this.props.movePlayerDown
+				37: this.props.movePlayerLeft,
+				65: this.props.movePlayerLeft,
+				39: this.props.movePlayerRight,
+				68: this.props.movePlayerRight,
+				81: this.props.rotatePlayerCounterClockwise,
+				69: this.props.rotatePlayerClockwise,
+				40: this.props.movePlayerDown,
+				83: this.props.movePlayerDown,
 			}
 		};
 	}
 
 	handleKeyPress = (e) => {
 		const code = e.keyCode;
-		if (!this.props.gameOver && _.has(this.state.controls, code)) {
+		console.log(code);
+		if (this.props.gameStarted && !this.props.gameOver && _.has(this.state.controls, code)) {
 			this.state.controls[code]();
 		}
 	}
 
 	componentDidMount() {
-		document.addEventListener('keypress', this.handleKeyPress);
+		document.addEventListener('keydown', this.handleKeyPress);
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('keypress', this.handleKeyPress);
+		document.removeEventListener('keydown', this.handleKeyPress);
 	}
 
 	render() {
