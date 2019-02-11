@@ -535,7 +535,6 @@ export const checkPlayerCanRotate = (playerState) => {
 		let playerPosition = getState().Main.playerPosition;
 		let gridState = getState().Main.gridState;
 		while (!canNotRotate && !noCollisions) {
-			console.log('xxxx', canNotRotate, noCollisions);
 			if (checkPlayerBottomCollision(playerState, playerPosition, gridState)) {
 				const playerMovedUp = dispatch(movePlayerUp(playerState, playerPosition));
 				console.log('uppp', playerMovedUp);
@@ -546,7 +545,6 @@ export const checkPlayerCanRotate = (playerState) => {
 				}
 			} else if (checkPlayerRightCollision(playerState, playerPosition, gridState)) {
 				const playerMovedLeft = dispatch(movePlayerLeft(playerState, playerPosition));
-				console.log('left', playerMovedLeft);
 				if (playerMovedLeft === false) {
 					canNotRotate = true;
 				} else {
@@ -554,7 +552,6 @@ export const checkPlayerCanRotate = (playerState) => {
 				}
 			} else if (checkPlayerLeftCollision(playerState, playerPosition, gridState)) {
 				const playerMovedRight = dispatch(movePlayerRight(playerState, playerPosition));
-				console.log('right', playerMovedRight);
 				if (playerMovedRight === false) {
 					canNotRotate = true;
 				} else {
