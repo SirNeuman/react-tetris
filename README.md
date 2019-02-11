@@ -4,17 +4,17 @@
 This project is inspired by Tetris Effect (2018). This version of Tetris is entirely implemented in javascript, html, and css, primarily utilizing React/Redux.
 
 - 1st goal is to build a basic version of tetris:
-  - basic graphics for grid/player
-  - tetromino bag logic (the bag generates a randomly sorted order for all 7 of the possible pieces)
-  - player controlled movement/rotation
-  - collision logic
-  - line clearing
+  - ~~basic graphics for grid/player~~
+  - ~~tetromino bag logic (the bag generates a randomly sorted order for all 7 of the possible pieces)~~
+  - ~~player controlled movement/rotation~~
+  - ~~collision logic~~
+  - ~~line clearing~~
   - point scoring (both points and record of line clearing)
-  - time display
-  - side menu (with time display, and point scoring)
-  - display next piece
-  - game over
-  - start game
+  - ~~time display~~
+  - ~~side menus (with time display, and point scoring)~~
+  - ~~display next piece~~
+  - ~~game over~~
+  - ~~start game~~
 
 - 2nd goal is more advanced game logic/UX improvements:
   - speed increase at intervals of line clears
